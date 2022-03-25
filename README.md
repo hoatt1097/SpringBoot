@@ -62,3 +62,24 @@ Swagger (API Ref) |  http://localhost:9119/swagger-ui.html   |
 Redoc (API Ref)   |  http://localhost:9119/redoc/index.html  |
 Swagger Spec      |  http://localhost:9119/api-docs          |
 
+### Tools
+1. Intellij
+2. Postman
+3. Sourcetree
+4. MYSQL Workbench
+
+
+### DOCUMENT
+1. Springboot + security
+   * https://www.callicoder.com/categories/spring-boot/
+   * https://www.callicoder.com/spring-boot-spring-security-jwt-mysql-react-app-part-1/
+   * https://kipalog.com/posts/Hu-o--ng-da--n-Spring-Security---JWT--Json-Web-Token----Hibernate
+
+2. API document
+   * Swagger
+     * https://swagger.io/docs/specification/about/
+     * https://topdev.vn/blog/gioi-thieu-swagger-cong-cu-document-cho-restfull-apis/
+     * https://topdev.vn/blog/su-dung-swagger-ui-trong-jersey-rest-ws-project/
+
+3. JWT
+   * https://viblo.asia/p/tim-hieu-ve-json-web-token-jwt-7rVRqp73v4bP
