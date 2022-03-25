@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,28 +13,20 @@ import lombok.Setter;
 public class ApiResponse {
     private Boolean success;
     private String message;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Object content;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    private Date createDate;
-
-    public ApiResponse(){
-        this.createDate = new Date();
-    }
+    public ApiResponse(){}
 
     public ApiResponse(Boolean success, String message, Object content){
         this.success = success;
         this.message = message;
         this.content = content;
-        this.createDate = new Date();
     }
 
     public ApiResponse(Boolean success, String message){
         this.success = success;
         this.message = message;
-        this.createDate = new Date();
     }
-
-
-
 }
