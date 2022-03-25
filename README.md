@@ -67,6 +67,7 @@ Swagger Spec      |  http://localhost:9119/api-docs          |
 2. Postman
 3. Sourcetree
 4. MYSQL Workbench
+5. Git
 
 
 ### DOCUMENT
@@ -75,11 +76,21 @@ Swagger Spec      |  http://localhost:9119/api-docs          |
    * https://www.callicoder.com/spring-boot-spring-security-jwt-mysql-react-app-part-1/
    * https://kipalog.com/posts/Hu-o--ng-da--n-Spring-Security---JWT--Json-Web-Token----Hibernate
 
+
 2. API document
    * Swagger
      * https://swagger.io/docs/specification/about/
      * https://topdev.vn/blog/gioi-thieu-swagger-cong-cu-document-cho-restfull-apis/
      * https://topdev.vn/blog/su-dung-swagger-ui-trong-jersey-rest-ws-project/
 
-3. JWT
+
+4. JWT
    * https://viblo.asia/p/tim-hieu-ve-json-web-token-jwt-7rVRqp73v4bP
+
+
+4. Git
+   * https://backlog.com/git-tutorial/vn/contents/
+
+
+5. SourceTree
+   * https://jdomain.vn/huong-dan-su-dung-source-tree/ 
