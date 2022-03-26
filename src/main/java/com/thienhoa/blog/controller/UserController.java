@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.thienhoa.blog.model.PaginationResponse;
 import com.thienhoa.blog.model.User;
-import com.thienhoa.blog.payload.ApiResponse;
+import com.thienhoa.blog.payload.response.ErrorResponse;
 import com.thienhoa.blog.repository.UserRepository;
 import com.thienhoa.blog.security.CurrentUser;
 import com.thienhoa.blog.security.CustomUserDetailsService;
@@ -37,8 +37,7 @@ public class UserController {
     public ResponseEntity<?> getCurrentUser(@CurrentUser UserPrincipal currentUser) {
         try {
             logger.info("************** Get current user START ********************");
-            return new ResponseEntity(new ApiResponse(true, "Get current user successfully!", currentUser),
-                    HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
         }
         finally {
             logger.info("************** Get current user stop ********************");
@@ -50,13 +49,11 @@ public class UserController {
         try {
             logger.info("************** Get user by userId START ********************");
             UserDetails userDetails = customUserDetailsService.loadUserById(Long.parseLong(userId));
-            return new ResponseEntity(new ApiResponse(true, "Get current user successfully!", userDetails),
-                    HttpStatus.OK);
+            return new ResponseEntity(userDetails, HttpStatus.OK);
         }
         catch (Exception e) {
             logger.error("User not found!");
-            return new ResponseEntity(new ApiResponse(false, "User not found!"),
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
         finally {
             logger.info("************** Get user by userId STOP ********************");
@@ -73,8 +70,7 @@ public class UserController {
         }
         catch (Exception e)
         {
-            return new ResponseEntity(new ApiResponse(false, "Get all user false!"),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ErrorResponse("Get all user false!"), HttpStatus.BAD_REQUEST);
         }
         finally {
             logger.info("************** Get list user STOP ********************");

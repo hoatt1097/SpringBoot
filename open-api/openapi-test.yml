@@ -1,0 +1,6075 @@
+openapi: 3.0.0
+info:
+  contact:
+    name: Itsumo API
+  description: Itsumo API
+  version: 1.0.0
+  title: itsumo api
+servers:
+  - url: 'http://localhost:3000/api/v1'
+    description: local
+  - url: 'https://itsumo/aby-tech.co.jp/api/v1'
+    description: prd
+paths:
+  /auth:
+    post:
+      summary: アカウント登録1
+      tags:
+        - clients
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                registration:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+            example:
+              registration:
+                email: test@example.com
+                password: test1234
+      responses:
+        '200':
+          description: test
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      first_name:
+                        nullable: true
+                      last_name:
+                        nullable: true
+                      first_name_hiragana:
+                        nullable: true
+                      last_name_hiragana:
+                        nullable: true
+                      cancellation_date:
+                        nullable: true
+                      created_at:
+                        type: string
+                      updated_at:
+                        type: string
+                      email:
+                        type: string
+                      provider:
+                        type: string
+                      uid:
+                        type: string
+                      allow_password_change:
+                        type: boolean
+              example:
+                status: success
+                data:
+                  id: 1
+                  first_name:
+                  last_name:
+                  first_name_hiragana:
+                  last_name_hiragana:
+                  cancellation_date:
+                  created_at: '2021-10-14T10:00:00.000+09:00'
+                  updated_at: '2021-10-14T10:00:00.000+09:00'
+                  email: test@gmail.com
+                  provider: email
+                  uid: test@gmail.com
+                  allow_password_change: false
+  /auth/sign_in:
+    post:
+      summary: ログイン
+      tags:
+        - clients
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                sign_in:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+                    device_apn:
+                      type: string
+            example:
+              sign_in:
+                email: test@test.com
+                password: test1234
+                device_apn: test_apn
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      id:
+                        type: integer
+                      uid:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      first_name_hiragana:
+                        type: string
+                      last_name_hiragana:
+                        type: string
+                      cancellation_date:
+                        nullable: true
+                      provider:
+                        type: string
+                      allow_password_change:
+                        type: boolean
+              example:
+                data:
+                  email: test@test.com
+                  id: 1
+                  uid: test@test.com
+                  first_name: 竜平
+                  last_name: 大谷
+                  first_name_hiragana: たつへい
+                  last_name_hiragana: おおたに
+                  cancellation_date:
+                  provider: test@test.com
+                  allow_password_change: false
+        '401':
+          description: is expected to eq 401
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                success: false
+                errors:
+                  - Invalid login credentials. Please try again.
+  /auth/validate_token:
+    get:
+      summary: validate_token
+      tags:
+        - clients
+      parameters:
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      responses:
+        '200':
+          description: return 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      first_name_hiragana:
+                        type: string
+                      last_name_hiragana:
+                        type: string
+                      cancellation_date:
+                        nullable: true
+                      email:
+                        type: string
+                      provider:
+                        type: string
+                      uid:
+                        type: string
+                      allow_password_change:
+                        type: boolean
+              example:
+                success: true
+                data:
+                  id: 28
+                  first_name: 光洋
+                  last_name: 大谷
+                  first_name_hiragana: みつひろ
+                  last_name_hiragana: おおたに
+                  cancellation_date:
+                  email: aldo@considine-block.info
+                  provider: email
+                  uid: aldo@considine-block.info
+                  allow_password_change: false
+        '401':
+          description: return 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                success: false
+                errors:
+                  - Invalid login credentials
+  /auth/confirmation:
+    get:
+      summary: メール認証
+      tags:
+        - clients
+      parameters:
+        - name: config
+          in: query
+          schema:
+            type: string
+          example: default
+        - name: confirmation_token
+          in: query
+          schema:
+            type: string
+          example: 3LcJAjVzwBbhppNYk3WL
+      responses:
+        '200':
+          description: 認証成功
+    post:
+      summary: メール認証再送信
+      tags:
+        - clients
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+            example:
+              email: janice@mertz.co
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: An email has been sent to 'janice@mertz.co' containing instructions
+                  for confirming your account.
+        '401':
+          description: is expected to eq 401
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                success: false
+                errors:
+                  - You must provide an email address.
+  /auth/password:
+    post:
+      summary: パスワードリセットメールの送信
+      tags:
+        - clients
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                redirect_url:
+                  type: string
+            example:
+              email: janeth@mcdermott.org
+              redirect_url: test
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: An email has been sent to 'janeth@mcdermott.org' containing
+                  instructions for resetting your password.
+        '401':
+          description: is expected to eq 401
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                success: false
+                errors:
+                  - Missing redirect URL.
+    patch:
+      summary: パスワード変更
+      tags:
+        - clients
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: password
+        - schema:
+            type: string
+          in: query
+          name: password_confirmation
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      id:
+                        type: integer
+                      uid:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      first_name_hiragana:
+                        type: string
+                      last_name_hiragana:
+                        type: string
+                      cancellation_date:
+                        nullable: true
+                      created_at:
+                        type: string
+                      updated_at:
+                        type: string
+                      provider:
+                        type: string
+                      allow_password_change:
+                        type: boolean
+                      account_name:
+                        type: string
+                  message:
+                    type: string
+              example:
+                success: true
+                data:
+                  email: sean@sipes.name
+                  id: 69
+                  uid: sean@sipes.name
+                  first_name: 純平
+                  last_name: 和田
+                  first_name_hiragana: じゅんぺい
+                  last_name_hiragana: わだ
+                  cancellation_date:
+                  created_at: '2021-11-24T15:43:56.755+09:00'
+                  updated_at: '2021-11-24T15:43:56.822+09:00'
+                  provider: email
+                  allow_password_change: false
+                  account_name: PAU
+                message: Your password has been successfully updated.
+  /auth/password/edit:
+    get:
+      summary: パスワードリセットの認証とリセット画面への遷移
+      tags:
+        - clients
+      parameters:
+        - name: reset_password_token
+          in: query
+          schema:
+            type: string
+          example: hMGfwvsppVCmrxFJnWsi
+        - name: config
+          in: query
+          schema:
+            type: string
+          example: default
+        - name: redirect_url
+          in: query
+          schema:
+            type: string
+          example: test
+      responses:
+        '302':
+          description: is expected to eq 302
+          content:
+            text/html:
+              schema:
+                type: string
+              example: <html><body>You are being <a href="http://www.example.com://test?access-token=bOdrsNNaEdZVju7lPkCOeg&amp;client=xQ0rUaob4zJYBSTUVdlRyw&amp;client_id=xQ0rUaob4zJYBSTUVdlRyw&amp;config=default&amp;expiry=1638931721&amp;reset_password=true&amp;token=bOdrsNNaEdZVju7lPkCOeg&amp;uid=bud_wisoky%40larson.org">redirected</a>.</body></html>
+  /categories:
+    get:
+      summary: カテゴリーに紐づくのものを返信する
+      description: カテゴリーに紐づくのものを返信する
+      operationId: getCategories
+      tags:
+        - categories
+      parameters:
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+              examples:
+                example:
+                  value:
+                    - id: 1
+                      name: お仕事
+                    - id: 2
+                      name: 家族
+                    - id: 3
+                      name: 身体
+                    - id: 4
+                      name: 自分
+        '400':
+          description: 不正なリクエストです。
+        '401':
+          description: 認証エラーです。
+  /counselors:
+    get:
+      summary: 未予約シフトを持つカウンセラーを返す
+      description: 未予約のシフトを持つカウンセラーを返す。
+      operationId: getCounselors
+      tags:
+        - counselors
+      parameters:
+        - schema:
+            type: string
+            nullable: true
+            format: date-time
+          in: query
+          name: startedAt
+        - in: query
+          name: pickup
+          schema:
+            type: string
+            nullable: true
+            format: string
+          description: 値が入っている場合ランダムに3件ピックアップする
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                uniqueItems: true
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/VideoCounselingShift'
+                    - properties:
+                        counselor:
+                          type: object
+                          properties:
+                            counselor:
+                              $ref: '#/components/schemas/Counselor'
+              examples:
+                example:
+                  value:
+                    - id: 1
+                      counselorId: 1
+                      clientId: null
+                      startedAt: '2021-09-22T09:00:00.000+09:00'
+                      endedAt: '2021-09-22T18:00:00.000+09:00'
+                      counselor:
+                        id: 1
+                        firstName: 勝義
+                        lastName: 金城
+                        firstNameHiragana: かねよし
+                        lastNameHiragana: かねしろ
+                        biography: 自己紹介です
+                        profileImage: null
+                        cancellationDate: null
+                    - id: 3
+                      counselorId: 3
+                      clientId: null
+                      startedAt: '2021-09-22T10:00:00.000+09:00'
+                      endedAt: '2021-09-22T19:00:00.000+09:00'
+                      counselor:
+                        id: 3
+                        firstName: 鈴紗
+                        lastName: 西野
+                        firstNameHiragana: りさ
+                        lastNameHiragana: にしの
+                        biography: 自己紹介です
+                        profileImage: null
+                        cancellationDate: null
+                    - id: 2
+                      counselorId: 2
+                      clientId: null
+                      startedAt: '2021-09-22T10:00:00.000+09:00'
+                      endedAt: '2021-09-22T19:00:00.000+09:00'
+                      counselor:
+                        id: 2
+                        firstName: 秀史
+                        lastName: 大石
+                        firstNameHiragana: ひでし
+                        lastNameHiragana: おおいし
+                        biography: 自己紹介です
+                        profileImage: null
+                        cancellationDate: null
+        '400':
+          description: 不正なリクエストです。
+        '401':
+          description: 認証エラーです。
+  /counselors/filter_category:
+    get:
+      summary: カテゴリーに紐付いた複数のカウンセラーを返す
+      description: カテゴリーに紐付いた複数のカウンセラーを返す
+      operationId: getCategoriesSearch
+      tags:
+        - counselors
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: id
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/Counselor'
+                    - properties:
+                        categories:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Category'
+              examples:
+                example:
+                  value:
+                    - id: 1
+                      biography: 自己紹介です
+                      firstName: 渡邉
+                      firstNameHiragana: わたなべ
+                      lastName: 郁哉
+                      lastNameHiragana: いくや
+                      profileImage: null
+                      cancellationDate: null
+                      categories:
+                        - id: 1
+                          name: お仕事
+                    - id: 2
+                      biography: 自己紹介です
+                      firstName: 向後
+                      firstNameHiragana: こうご
+                      lastName: 澄哉
+                      lastNameHiragana: すみや
+                      profileImage: 'https://s3/images/2'
+                      cancellationDate: null
+                      categories:
+                        - id: 1
+                          name: お仕事
+                        - id: 2
+                          name: 家族
+        '400':
+          description: 不正なリクエストです。
+        '401':
+          description: 認証エラーです。
+  /video_counseling_interview_sheet:
+    get:
+      summary: 問診票の問い及び選択肢の文言を取得する
+      description: 問診票の問い及び選択肢の文言を取得する
+      operationId: getVideoCounselingInterviewSheet
+      tags:
+        - clients
+      parameters:
+        - name: accessToken
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: client
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: expiry
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: uid
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: tokenType
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VideoCounselingInterviewSheetItem'
+              example:
+                - questionNumber: 1
+                  questionText: 物事に対してほとんど興味がない、または楽しめない
+                  choices:
+                    - choiceNumber: 1
+                      choiceText: 全く無い
+                    - choiceNumber: 2
+                      choiceText: 数日
+                    - choiceNumber: 3
+                      choiceText: 半分以上
+                    - choiceNumber: 4
+                      choiceText: ほとんど毎日
+                - questionNumber: 2
+                  questionText: 気分が落ち込む、憂うつになる、または絶望的な気持ちになる
+                  choices:
+                    - choiceNumber: 1
+                      choiceText: 全く無い
+                    - choiceNumber: 2
+                      choiceText: 数日
+                    - choiceNumber: 3
+                      choiceText: 半分以上
+                    - choiceNumber: 4
+                      choiceText: ほとんど毎日
+                - questionNumber: 3
+                  questionText: 寝付きが悪い、途中で目がさめる、または逆に眠り過ぎる
+                  choices:
+                    - choiceNumber: 1
+                      choiceText: 全く無い
+                    - choiceNumber: 2
+                      choiceText: 数日
+                    - choiceNumber: 3
+                      choiceText: 半分以上
+                    - choiceNumber: 4
+                      choiceText: ほとんど毎日
+  /video_counseling_shifts/reservation_requested:
+    get:
+      summary: 予約申請したシフトを取得する
+      description: 指定された年、月の予約申請したシフトを取得する
+      operationId: getVideoCounselingShiftsReservationRequested
+      tags:
+        - clients
+      parameters:
+        - name: accessToken
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: client
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: expiry
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: uid
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: tokenType
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: year
+          in: query
+          description: 年
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: month
+          in: query
+          description: 月
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VideoCounselingShiftReservedRequested'
+              example:
+                - videoCounselingShiftId: 1
+                  counselorName: 服部あきな
+                  startedAt: '2021-09-22T09:00:00.000+09:00'
+                  endedAt: '2021-09-22T09:50:00.000+09:00'
+                - videoCounselingShiftId: 2
+                  counselorName: 向後すみ
+                  startedAt: '2021-09-22T10:00:00.000+09:00'
+                  endedAt: '2021-09-22T10:50:00.000+09:00'
+                - videoCounselingShiftId: 3
+                  counselorName: 小寺たつ
+                  startedAt: '2021-09-22T11:00:00.000+09:00'
+                  endedAt: '2021-09-22T11:50:00.000+09:00'
+        '400':
+          description: 不正なリクエストです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+              example:
+                message: Bad Request
+                errors:
+                  - 年月が不正です
+  /video_counseling_shifts/{videoCounselingShiftId}/counseling_amount:
+    get:
+      summary: カウンセリング料金を取得する
+      description: 指定したシフトのカウンセリング料金を取得する
+      operationId: getVideoCounselingShiftsCounselingAmount
+      tags:
+        - clients
+      parameters:
+        - name: accessToken
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: client
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: expiry
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: uid
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: tokenType
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: videoCounselingShiftId
+          in: path
+          description: ビデオカウンセリングシフトID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  videoCounselingAmount:
+                    description: ビデオカウンセリング料金
+                    type: integer
+                    format: int64
+              example:
+                - videoCounselingAmount: 5000
+  /counselors/{counselorId}:
+    get:
+      summary: カウンセラー情報を取得
+      description:
+        指定IDのカウンセラー情報とビデオカウンセリングの10分給、カテゴリー情報を返す
+      operationId: getCounselor
+      tags:
+        - counselors
+      parameters:
+        - name: counselorId
+          in: path
+          description: カウンセラーID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  counselors:
+                    $ref: '#/components/schemas/Counselor'
+                  categories:
+                    type: array
+                    description: 'カテゴリー'
+                    uniqueItems: true
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/Category'
+                  active_video_counseling_wage_per_ten_minute:
+                    $ref: '#/components/schemas/VideoCounselingWagePerTenMinute'
+              examples:
+                example:
+                  summary: 通常のレスポンス
+                  value:
+                    counselors:
+                      id: 1
+                      firstName: 勝義
+                      lastName: 金城
+                      firstNameHiragana: かねよし
+                      lastNameHiragana: かねしろ
+                      biography: 自己紹介です
+                      profileImage: null
+                      cancellationDate: null
+                    categories:
+                      - id: 1
+                        name: お仕事
+                      - id: 2
+                        name: 家族
+                    caounselorsPrice:
+                      counselorId: 1
+                      wage: 1000
+                      startedOn: '2021-01-01'
+                      endedOn: '2021-01-31'
+
+        '400':
+          description: 不正なリクエストです。
+        '404':
+          description: リソースが存在しない
+  /counselors/{counselorId}/video_counseling_shifts/unreserved:
+    get:
+      summary: 未予約シフトを取得する
+      description: 指定されたカウンセラーID、年、月のシフトを取得する
+      operationId: getCounselorsVideoCounselingShiftsUnreserved
+      tags:
+        - counselors
+      parameters:
+        - name: accessToken
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: client
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: expiry
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: uid
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: tokenType
+          in: header
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - name: counselorId
+          in: path
+          description: カウンセラーID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: year
+          in: query
+          description: 年
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: month
+          in: query
+          description: 月
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VideoCounselingShift'
+              example:
+                - id: 1
+                  counselorId: 1
+                  startedAt: '2021-09-22T09:00:00.000+09:00'
+                  endedAt: '2021-09-22T09:50:00.000+09:00'
+                - id: 2
+                  counselorId: 1
+                  startedAt: '2021-09-22T10:00:00.000+09:00'
+                  endedAt: '2021-09-22T10:50:00.000+09:00'
+                - id: 3
+                  counselorId: 1
+                  startedAt: '2021-09-22T11:00:00.000+09:00'
+                  endedAt: '2021-09-22T11:50:00.000+09:00'
+        '400':
+          description: 不正なリクエストです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+    # TODO: change to video_counseling_reservations
+  /client/video_counseling_reservations/{video_counseling_reservations_id}/rooms/participants/join:
+    post:
+      summary: カウンセリングルームへの入室
+      tags:
+        - participants
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+        - name: videoCounselingReservationId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  externalUserId:
+                    type: string
+                  attendeeId:
+                    type: string
+                  joinToken:
+                    type: string
+                  room:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      meetingId:
+                        type: string
+                      externalMeetingId:
+                        type: string
+                      audioHostUrl:
+                        type: string
+                      audioFallbackUrl:
+                        type: string
+                      screenDataUrl:
+                        type: string
+                      screenSharingUrl:
+                        type: string
+                      screenViewingUrl:
+                        type: string
+                      signalingUrl:
+                        type: string
+                      turnControlUrl:
+                        type: string
+                      eventIngestionUrl:
+                        type: string
+                      mediaRegion:
+                        type: string
+                      deletedAt:
+                        nullable: true
+              example:
+                id: 1
+                externalUserId: test
+                attendeeId: nsmhafrhkqpmirxkxbky
+                joinToken: offvwobchjwlhdkpoywg
+                room:
+                  id: 1
+                  meetingId: fxzjelaoulhtocolxwgd
+                  externalMeetingId: fvxvjaylizcylxpiodzb
+                  audioHostUrl: zudhxocxnxnwakyqjpji
+                  audioFallbackUrl: viwsejospczsirckpxuv
+                  screenDataUrl: jwoyfsnfimgcgxzwzeoy
+                  screenSharingUrl: kfbomzeagxrfemqtwawm
+                  screenViewingUrl: hgipzowsvuukdrsklmcx
+                  signalingUrl: qiukeenmntbuzpusxftf
+                  turnControlUrl: vgspztnudcctfiqirmzb
+                  eventIngestionUrl: fvxhxlwwbznfdrszqhkm
+                  mediaRegion: Pacific/Fiji
+                  deletedAt:
+  /client/video_counseling_reservations/{video_counseling_reservation_id}/rooms/participants/{id}/exit:
+    post:
+      summary: カウンセリングルームの退出
+      tags:
+        - participants
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 61
+        - name: videoCounselingReservationId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 88
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 46m
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  externalUserId:
+                    type: string
+                  attendeeId:
+                    type: string
+                  join_token:
+                    type: string
+                  room:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      meetingId:
+                        type: string
+                      externalMeetingId:
+                        type: string
+                      audioHostUrl:
+                        type: string
+                      audioFallbackUrl:
+                        type: string
+                      screenDataUrl:
+                        type: string
+                      screenSharingUrl:
+                        type: string
+                      screenViewingUrl:
+                        type: string
+                      signalingUrl:
+                        type: string
+                      turnControlUrl:
+                        type: string
+                      eventIngestionUrl:
+                        type: string
+                      mediaRegion:
+                        type: string
+                      deletedAt:
+                        nullable: true
+              example:
+                id: 46
+                externalUserId: glnkceazrionufemonix
+                attendeeId: nsmhafrhkqpmirxkxbky
+                joinToken: offvwobchjwlhdkpoywg
+                room:
+                  id: 88
+                  meetingId: laciayuldmenckedexlt
+                  externalMeetingId: cwgljpdozxtztfzpxuqz
+                  audioHostUrl: wposbtvqqdufhggkduci
+                  audioFallbackUrl: gziqjzustikzdjvdrogf
+                  screenDataUrl: vljccgmpyfkyyvxxzlpe
+                  screenSharingUrl: jxuecmdxdblhafkorvum
+                  screenViewingUrl: jvxixxjugifpltvpvplg
+                  signalingUrl: zvgnqqbnvsfeijvapjlh
+                  turnControlUrl: ryluwawszxzqdkdhvhwi
+                  eventIngestionUrl: allxcxjvldespfckfjmu
+                  mediaRegion: Asia/Shanghai
+                  deletedAt:
+  /client/get_publishable_key:
+    get:
+      summary: publishable_keyを取得するには
+      tags:
+        - paymentIntent
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publishableKey:
+                    type: string
+              example:
+                publishableKey: "gjdhnsw54237643894r3nhjmsgkdjqawedgwx"
+  /payment_intents:
+    post:
+      summary: 支払い意図を作成する(create payment intent )
+      tags:
+        - paymentIntent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CounselingReservationPaymentIntentReq'
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentIntentId:
+                    type: string
+                  clientSecret:
+                    type: string
+                  videoCounselingReservationId:
+                    type: integer
+                    format: int64
+              example:
+                paymentIntentId: "pi_3Jz9EaICMyfN5jQh0ynrofYm"
+                clientSecret: "gjdhnsw54237643894r3nhjmsgkdjqawedgwx"
+                videoCounselingReservationId: 1
+        '400':
+          description: could not initiate payment (eg no valid shift found).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                success: false
+                errors:
+                  - Could not find the requested shift.
+  /video_counseling_reservations:
+    get:
+      summary: クライアントの予約履歴を取得
+      operationId: getVideoCounselingReservationList
+      tags:
+        - client_counseling
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - name: counselorId
+          in: query
+          required: false
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoCounselingReservationListResponse'
+        '401':
+          description: 認証エラーです。
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+    post:
+      summary: 支払い意図を確認する(confirm payment intent)
+      tags:
+        - client_counseling
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVideoCounselingReservationReq'
+      responses:
+        '200':
+          description: successfully made reservation
+        '400':
+          description: 予約できませんでした(could not make reservation, validation error)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                success: false
+                errors:
+                  - Please answer interview questions.
+        '401':
+          description: 認証エラー auth error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                success: false
+                errors:
+                  - Please login.
+  /video_counseling_reservations/{video_counseling_reservation_id}:
+    get:
+      summary: カウンセリング待機室で予約に関しての情報を取得
+      description: カウンセリング待機室で予約に関しての情報を取得|Get information for Counseling waiting room
+      operationId: getVideoCounselingReservationInfo
+      tags:
+        - client_counseling
+      parameters:
+        - name: video_counseling_reservation_id
+          in: path
+          description: 動画カウンセイングの予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoCounselingReservation'
+              examples:
+                example:
+                  summary:
+                  value:
+                    videoCounselingReservation:
+                      id: 1
+                      videoCounselingReservationRequestId: 1
+                      clientId: 1
+                      status: 1
+                      totalAmountWithoutTax: 2
+                      totalAmountWithTax: 4
+                      taxRate: 3.4
+                      counselingCommission: 5
+                      counselingCommissionRate: 3
+                      shift:
+                        id: 1
+                        counselorId: 1
+                        startedAt: 2022-01-02 09:00:00
+                        endedAt: 2022-01-02 09:15:00
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+    delete:
+      summary: カウンセリング予約を削除
+      description: 予約を削除し、通知を飛ばし、返金処理を行う
+      operationId: deleteVideoCounselingReservation
+      tags:
+        - client_counseling
+      parameters:
+        - name: video_counseling_reservation_id
+          in: path
+          description: 動画カウンセイングの予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteVideoCounselingReservationReq'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当なし
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+
+  /client:
+    get:
+      summary: 顧客情報を取得する
+      description: 自身の顧客情報を取得する
+      operationId: getClients
+      tags:
+        - clients
+      parameters:
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+              examples:
+                full:
+                  summary: 情報が全て登録されている場合
+                  value:
+                    id: 2
+                    firstName: 向後
+                    lastName: 澄哉
+                    firstNameHiragana: こうご
+                    lastNameHiragana: すみや
+                    cancellationDate: null
+                    clientsInfo:
+                      id: 2
+                      gender: 1
+                      birthday: '1973-11-26'
+                      phoneNumber: '326316786'
+                      email: maxwell.moen@stehr-west.com
+                      jobsStation: 品川
+                      identificationCard: 0
+                      address:
+                        fullAddress: 佐賀県 三島郡島本町 東野町西神田 1-28-30 ドゥエルR.S 202
+                        zipCode: '71378'
+                        prefecture: 佐賀県
+                        city: 三島郡島本町
+                        addressLine1: 東野町西神田1-28-30
+                        addressLine3: ドゥエルR.S 202
+                withNull:
+                  summary: 初期登録時
+                  value:
+                    id: 2
+                    firstName: 向後
+                    lastName: 澄哉
+                    firstNameHiragana: こうご
+                    lastNameHiragana: すみや
+                    cancellationDate: null
+                    clientsInfo:
+                      id: 2
+                      gender: null
+                      birthday: null
+                      phoneNumber: null
+                      email: null
+                      jobsStation: null
+                      identificationCard: 0
+                      address:
+                        fullAddress: ''
+                        zipCode: null
+                        prefecture: null
+                        city: null
+                        addressLine1: null
+                        addressLine3: null
+        '400':
+          description: 不正なリクエストです。
+        '404':
+          description: リソースが存在しない
+    put:
+      summary: 顧客情報を更新する
+      description:
+        自身の顧客基本情報を更新する。
+        指定したパラメーターの値のみ更新される（詳しくはexampleを参照）。
+      operationId: updateClients
+      tags:
+        - clients
+      parameters:
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientForm'
+            examples:
+              full:
+                summary: 全指定
+                value:
+                  firstName: 澄哉
+                  lastName: 向後
+                  firstNameHiragana: すみや
+                  lastNameHiragana: こうご
+              fullName:
+                summary: 姓名
+                value:
+                  firstName: 澄哉
+                  lastName: 向後
+              fullNameHiragana:
+                summary: ふりがな
+                value:
+                  firstNameHiragana: すみや
+                  lastNameHiragana: こうご
+      responses:
+        '204':
+          description: 成功
+        '400':
+          description: 不正なリクエストです。
+        '404':
+          description: リソースが存在しない
+  /client/register:
+    patch:
+      summary: アカウント登録2
+      tags:
+        - clients
+      parameters:
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                first_name_hiragana:
+                  type: string
+                last_name_hiragana:
+                  type: string
+                device_apn:
+                  type: string
+            example:
+              first_name: test
+              last_name: test
+              first_name_hiragana: test
+              last_name_hiragana: test
+              device_apn: apn1234
+      responses:
+        '200':
+          description: is expected to eq 200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '500':
+          description: is expected to eq 500
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: string
+              example:
+                message: Internal Server Error
+                errors:
+                  - 'Validation failed: First name is too long (maximum is 63 characters)'
+  '/clients_info':
+    put:
+      summary: 顧客の詳細情報を更新する
+      description:
+        自身の顧客詳細情報を更新する。
+        指定したパラメーターの値のみ更新される（詳しくはexampleを参照）。
+      operationId: updateClientsInfo
+      tags:
+        - clients_info
+      parameters:
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientsInfoForm'
+            examples:
+              full:
+                summary: 全指定
+                value:
+                  birthday: '1990-01-01'
+                  email: sample@example.com
+                  zipCode: '1400002'
+                  prefecture: 東京都
+                  city: 品川区
+                  addressLine1: 東品川1-28-3011
+                  addressLine2: ドゥエルR.S 202
+                  jobsStation: 品川
+              multi:
+                summary: 一部指定
+                value:
+                  zipCode: '1400002'
+                  prefecture: 東京都
+                  city: 品川区
+                  addressLine1: 東品川1-28-3011
+                  addressLine2: ドゥエルR.S 202
+              birthday:
+                summary: 誕生日
+                value:
+                  birthday: '1990-01-01'
+              email:
+                summary: メールアドレス
+                value:
+                  email: sample@example.com
+              zipCode:
+                summary: 郵便番号
+                value:
+                  zipCode: '1400002'
+              prefecture:
+                summary: 都道府県
+                value:
+                  prefecture: 東京都
+              city:
+                summary: 市区町村
+                value:
+                  city: 品川区
+              addressLine1:
+                summary: 住所（丁目、番地、号）
+                value:
+                  addressLine1: 東品川1-28-3011
+              addressLine2:
+                summary: 住所（建物名等）
+                value:
+                  addressLine2: ドゥエルR.S 202
+              jobsStation:
+                summary: 最寄り駅
+                value:
+                  jobsStation: 品川
+      responses:
+        '204':
+          description: 成功
+        '400':
+          description: 不正なリクエストです。
+        '404':
+          description: リソースが存在しない
+  /client/notifications:
+    get:
+      summary: クライアントへの通知一覧
+      description: クライアントへの通知一覧
+      operationId: listClientNotifications
+      tags:
+        - client_notification
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientNotificationListResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /client/notifications/mark_as_read:
+    post:
+      summary: 通知を既読にする
+      description: 通知を既読にする
+      operationId: readClientNotifications
+      tags:
+        - client_notification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notifications:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+      responses:
+        '200':
+          description: successfully marked as read
+        '400':
+          description: could not mark as read
+        '401':
+          description: Login error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+
+  /contact_us_types:
+    get:
+      summary: お問い合わせ種別の一覧を取得する。
+      description: お問い合わせ種別の一覧を取得する。
+      operationId: getContactUsTypes
+      tags:
+        - contact_us_types
+      parameters:
+        - in: header
+          name: access-token
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: client
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: expiry
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: uid
+          schema:
+            type: string
+            nullable: false
+            format: string
+        - in: header
+          name: token-type
+          schema:
+            type: string
+            nullable: false
+            format: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactUsType'
+              examples:
+                example:
+                  value:
+                    - id: 1
+                      name: ログインについて
+                    - id: 2
+                      name: 退会について
+                    - id: 3
+                      name: その他
+        '400':
+          description: 不正なリクエストです。
+        '401':
+          description: 認証エラーです。
+  /contact_us_via_clients:
+    post:
+      summary: クライエントからのお問い合わせ。
+      description:
+        クライエントからのお問い合わせレコードを作成する。
+      operationId: postContactUsViaClients
+      tags:
+        - contact_us_via_clients
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactUsViaClient'
+            example:
+              contactUsTypeId: 1
+              contents: 使い方について
+              desiredResults: 使い方が分かること
+      responses:
+        '204':
+          description: 成功
+        '400':
+          description: 不正なリクエストです。
+        '401':
+          description: 認証エラーです。
+        '422':
+          description: 入力値が不正です。
+  /ifc/auth:
+    post:
+      summary: 登録
+      description: 登録
+      operationId: signUp
+      tags:
+        - ifc_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+      responses:
+        '200':
+          description: 登録成功（メール送信）
+        '401':
+          description: 登録失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/auth/confirmation:
+    get:
+      summary: メール認証
+      description: メール認証
+      operationId: confirmation
+      tags:
+        - ifc_auth
+      parameters:
+        - name: confirmation_token
+          in: query
+          schema:
+            type: string
+          example: 3LcJAjVzwBbhppNYk3WL
+        - name: redirect_url
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 認証成功
+  /ifc/auth/sign_in:
+    post:
+      summary: ログイン
+      description: ログイン
+      operationId: signIn
+      tags:
+        - ifc_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        '200':
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginSuccess"
+          headers:
+            access-token:
+              schema:
+                type: string
+                description: devise用アクセストークン
+            uid:
+              schema:
+                type: string
+                description: devise用uid
+            client:
+              schema:
+                type: string
+                description: devise用client
+        '401':
+          description: ログイン失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/auth/validate_token:
+    get:
+      summary: 認証情報確認
+      description: 認証情報確認
+      operationId: validateToken
+      tags:
+        - ifc_auth
+      responses:
+        '200':
+          description: 認証済
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginSuccess"
+        '401':
+          description: 認証されていない（期限切れも？）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/auth/register/info:
+    post:
+      summary: 新規登録１
+      description: 新規登録１
+      operationId: registerInfo
+      tags:
+        - ifc_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInfoRequest"
+      responses:
+        '200':
+          description: 新規登録１成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/auth/register/identification:
+    post:
+      summary: 新規登録２
+      description: 新規登録２
+      operationId: registerIdentification
+      tags:
+        - ifc_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterIdentification"
+      responses:
+        '200':
+          description: 新規登録２成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/auth/password:
+    post:
+      summary: パスワードリセットリクエスト
+      description: パスワードリセットリクエスト
+      operationId: resetPassword
+      tags:
+        - ifc_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+      responses:
+        '200':
+          description: 処理成功
+        '401':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+    put:
+      summary: 新しいパスワードの設定
+      description: 新しいパスワードの設定
+      operationId: settingPassword
+      tags:
+        - ifc_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingPasswordRequest"
+      responses:
+        '200':
+          description: 処理成功
+        '401':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/auth/aby_certification:
+    post:
+      summary: 新規登録されたカウンセラーを承認する
+      description: |
+        新規登録されたカウンセラーを承認する
+        - 管理者カウンセラーアカウントのみ実行可能。
+      operationId: abyCertificationRegister
+      tags:
+        - ifc_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CounselorCertificationRequest"
+      responses:
+        '200':
+          description: 処理成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗・権限無し
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+    put:
+      summary: 資格更新されたカウンセラーを承認する
+      description: |
+        資格更新されたカウンセラーを承認する
+        - 管理者カウンセラーアカウントのみ実行可能。
+      operationId: abyCertificationUpdate
+      tags:
+        - ifc_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CounselorCertificationRequest"
+      responses:
+        '200':
+          description: 処理成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗・権限無し
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/auth/stripe_link:
+    post:
+      summary: stripe linkを新たに作成しなおす
+      description: stripe linkを新たに作成しなおす
+      operationId: createStripeLink
+      tags:
+        - ifc_auth
+      responses:
+        '200':
+          description: 処理成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗・権限無し
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/informations:
+    get:
+      summary: itsumo for counselorからのお知らせ一覧
+      description: itsumo for counselorからのお知らせ一覧
+      operationId: listInformations
+      tags:
+        - ifc_information
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InformationListResponse'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/informations/{information_id}:
+    get:
+      summary: itsumo for counselorからのお知らせ取得
+      description: itsumo for counselorからのお知らせ取得
+      operationId: getInformation
+      tags:
+        - ifc_information
+      parameters:
+        - name: information_id
+          in: path
+          description: itsumo for counselorからのお知らせID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InformationData'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/notifications:
+    get:
+      summary: カウンセラーへの通知一覧
+      description: カウンセラーへの通知一覧
+      operationId: listNotifications
+      tags:
+        - ifc_notification
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationListResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/notifications/{notification_id}:
+    put:
+      summary: 通知を既読にする
+      description: 通知を既読にする
+      operationId: updateNotification
+      tags:
+        - ifc_notification
+      parameters:
+        - name: notification_id
+          in: path
+          description: 通知ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/reservations/today:
+    get:
+      summary: TOPページの本日の予約一覧
+      description: 本日のビデオ＆チャットカウンセリング予約一覧
+      operationId: listTodayReservations
+      tags:
+        - ifc_top
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationListResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/reservations/next:
+    get:
+      summary: TOPページの次回の予約一覧
+      description: |
+        次回のビデオ＆チャットカウンセリング予約一覧
+        - 翌日以降の直近３件を出す
+      operationId: listNextReservations
+      tags:
+        - ifc_top
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationListResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/video_reservations:
+    get:
+      summary: ビデオカウンセリング予約一覧
+      description: |
+        ビデオカウンセリング予約一覧
+        - monthは必須
+        - dayが無い場合は、１～月末全部
+      operationId: listVideoReservations
+      tags:
+        - ifc_video
+      parameters:
+        - $ref: '#/components/parameters/Month'
+        - $ref: '#/components/parameters/Day'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoReservationListResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/video_reservations/{video_reservation_id}:
+    get:
+      summary: ビデオカウンセリング予約を取得
+      description: ビデオカウンセリング予約を取得
+      operationId: getVideoReservation
+      tags:
+        - ifc_video
+      parameters:
+        - name: video_reservation_id
+          in: path
+          description: ビデオカウンセリング予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoReservationListData'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginError'
+        '404':
+          description: 該当データ無し
+    put:
+      summary: ビデオカウンセリング予約を更新
+      description: ビデオカウンセリング予約を更新
+      operationId: updateVideoReservation
+      tags:
+        - ifc_video
+      parameters:
+        - name: video_reservation_id
+          in: path
+          description: ビデオカウンセリング予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoReservationUpdateRequest'
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  '/ifc/video_reservations/{video_reservation_id}/meeting':
+    get:
+      summary: ビデオカウンセリングのミーティング情報取得
+      description: ビデオカウンセリングのミーティング情報取得
+      operationId: getVideoMeeting
+      tags:
+        - ifc_video
+      parameters:
+        - name: video_reservation_id
+          in: path
+          description: ビデオカウンセリング予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoMeetingResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginError'
+        '404':
+          description: 該当データ無し
+    delete:
+      summary: ビデオカウンセリングのミーティングを終了
+      description: ビデオカウンセリングのミーティングを終了
+      operationId: deleteVideoMeeting
+      tags:
+        - ifc_video
+      parameters:
+        - name: video_reservation_id
+          in: path
+          description: ビデオカウンセリング予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 処理成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginError'
+        '404':
+          description: 該当データ無し
+  '/ifc/video_reservations/{video_reservation_id}/movie':
+    get:
+      summary: ビデオカウンセリングの録画データを取得
+      description: ビデオカウンセリングの録画データを取得
+      operationId: getVideoCounselingMovie
+      tags:
+        - ifc_video
+      parameters:
+        - name: video_reservation_id
+          in: path
+          description: ビデオカウンセリング予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoMovieResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginError'
+        '404':
+          description: 該当データ無し
+  /ifc/video_shifts:
+    get:
+      summary: ビデオカウンセリングシフト一覧
+      description: ビデオカウンセリングシフト一覧
+      operationId: listVideoShifts
+      tags:
+        - ifc_video
+      parameters:
+        - $ref: '#/components/parameters/Month'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoShiftListResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+    post:
+      summary: ビデオカウンセリングシフト追加
+      description: ビデオカウンセリングシフト追加
+      operationId: createVideoShift
+      tags:
+        - ifc_video
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoShiftCreateRequest'
+      responses:
+        '200':
+          description: 取得成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/video_shift/{video_shift_id}:
+    put:
+      summary: ビデオカウンセリングシフトを更新
+      description: ビデオカウンセリングシフトを更新
+      operationId: updateVideoShift
+      tags:
+        - ifc_video
+      parameters:
+        - name: video_shift_id
+          in: path
+          description: ビデオカウンセリングシフトID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoShiftUpdateData'
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+    delete:
+      summary: ビデオカウンセリングシフトを削除
+      description: ビデオカウンセリングシフトを削除
+      operationId: deleteVideoShift
+      tags:
+        - ifc_video
+      parameters:
+        - name: video_shift_id
+          in: path
+          description: ビデオカウンセリングシフトID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 削除成功
+        '400':
+          description: 削除失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/video_shift_commit:
+    post:
+      summary: ビデオカウンセリングシフト確定・未確定
+      description: |
+        ビデオカウンセリングシフト確定・未確定
+        * 確定：未確定シフトが確定済みシフトに変更される
+        * 未確定：予約されていないシフトをすべて未確定シフトに変更される
+      operationId: commitVideoShift
+      tags:
+        - ifc_video
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoShiftCommitRequest'
+      responses:
+        '200':
+          description: 処理成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/chat_shifts:
+    get:
+      summary: チャットカウンセリングシフト一覧
+      description: チャットカウンセリングシフト一覧
+      operationId: getChatShifts
+      tags:
+        - ifc_chat
+      parameters:
+        - $ref: '#/components/parameters/Month'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatShiftResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+    post:
+      summary: チャットカウンセリングシフト更新
+      description: チャットカウンセリングシフト更新
+      operationId: updateChatShift
+      tags:
+        - ifc_chat
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatShiftUpdateRequest'
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/chat_reservations:
+    get:
+      summary: チャットカウンセリング予約一覧
+      description: チャットカウンセリング予約一覧
+      operationId: listChatReservations
+      tags:
+        - ifc_chat
+      parameters:
+        - $ref: '#/components/parameters/Month'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatReservationListResponse'
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/chat_reservations/{chat_reservation_id}:
+    put:
+      summary: チャットカウンセリング予約を更新
+      description: チャットカウンセリング予約を更新
+      operationId: updateChatReservation
+      tags:
+        - ifc_chat
+      parameters:
+        - name: chat_reservation_id
+          in: path
+          description: チャットカウンセリング予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatReservationUpdateRequest'
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/chat_reservations/{chat_reservation_id}/messages:
+    post:
+      summary: チャットカウンセリングのチャットメッセージを送信したことをお知らせ
+      description: チャットカウンセリングのチャットメッセージを送信したことをお知らせ
+      operationId: sendChatMessage
+      tags:
+        - ifc_chat
+      parameters:
+        - name: chat_reservation_id
+          in: path
+          description: チャットカウンセリング予約ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatReservationSendMessageRequest'
+      responses:
+        '200':
+          description: 処理成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/contact_types:
+    get:
+      summary: お問い合わせの種類取得
+      description: お問い合わせの種類取得
+      operationId: getContactTypes
+      tags:
+        - ifc_master
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContactType"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/contact:
+    post:
+      summary: お問い合わせ送信
+      description: お問い合わせ送信
+      operationId: sendContact
+      tags:
+        - ifc_contact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+      responses:
+        '200':
+          description: 処理成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/clients:
+    get:
+      summary: クライアント一覧取得
+      description: クライアント一覧取得
+      operationId: listClients
+      tags:
+        - ifc_client
+      parameters:
+        - $ref: '#/components/parameters/SearchWord'
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientListResponse'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/clients/{client_id}:
+    get:
+      summary: クライアント詳細情報取得
+      description: クライアント詳細情報取得
+      operationId: getClientDetail
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDetail'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+    put:
+      summary: クライアント情報更新
+      description: クライアント情報更新
+      operationId: updateClientDetail
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDetailUpdateRequest'
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/clients/{client_id}/avatar:
+    get:
+      summary: クライアントアバター画像取得
+      description: クライアントアバター画像取得
+      operationId: getClientAvatar
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileData'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/clients/{client_id}/interview_sheets:
+    get:
+      summary: クライアント問診票一覧取得
+      description: クライアント問診票一覧取得
+      operationId: listClientInterviewSheets
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientInterviewSheetListResponse'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/clients/{client_id}/interview_sheets/{sheet_id}:
+    get:
+      summary: クライアント問診票詳細取得
+      description: クライアント問診票詳細取得
+      operationId: getClientInterviewSheet
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: sheet_id
+          in: path
+          description: 問診票ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientInterviewSheetAnswerResponse'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/clients/{client_id}/medical_records:
+    get:
+      summary: クライアントカルテ一覧取得
+      description: クライアントカルテ一覧取得
+      operationId: listClientMedicalRecords
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientMedicalRecordListResponse'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/clients/{client_id}/chat_medical_records/{chat_medical_record_id}:
+    get:
+      summary: クライアントチャットカウンセリングカルテ詳細取得
+      description: クライアントチャットカウンセリングカルテ詳細取得
+      operationId: getClientChatMedicalRecord
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: chat_medical_record_id
+          in: path
+          description: カルテID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientMedicalRecordDetailResponse'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+    put:
+      summary: クライアントチャットカウンセリングカルテ更新
+      description: クライアントチャットカウンセリングカルテ更新
+      operationId: updateClientChatMedicalRecord
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: chat_medical_record_id
+          in: path
+          description: カルテID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientMedicalRecordUpdateRequest"
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/clients/{client_id}/video_medical_records/{video_medical_record_id}:
+    get:
+      summary: クライアントビデオカウンセリングカルテ詳細取得
+      description: クライアントビデオカウンセリングカルテ詳細取得
+      operationId: getClientVideoMedicalRecord
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: video_medical_record_id
+          in: path
+          description: カルテID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientMedicalRecordDetailResponse'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+    put:
+      summary: クライアントビデオカウンセリングカルテ更新
+      description: クライアントビデオカウンセリングカルテ更新
+      operationId: updateClientVideoMedicalRecord
+      tags:
+        - ifc_client
+      parameters:
+        - name: client_id
+          in: path
+          description: クライアントID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: video_medical_record_id
+          in: path
+          description: カルテID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientMedicalRecordUpdateRequest"
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/interview_sheet:
+    get:
+      summary: カウンセリング問診票の問と選択肢情報を取得する
+      description: カウンセリング問診票の問と選択肢情報を取得する
+      operationId: getInterviewSheetData
+      tags:
+        - ifc_master
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InterviewSheetQuestion'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/categories:
+    get:
+      summary: カテゴリーデータのを取得する
+      description: カテゴリーデータのを取得する
+      operationId: listCategories
+      tags:
+        - ifc_master
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryListResponse"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/avatar:
+    get:
+      summary: 自分自身のアバター画像取得
+      description: 自分自身のアバター画像取得
+      operationId: getMyAvatar
+      tags:
+        - ifc_counselor
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileData'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/settings/account:
+    get:
+      summary: アカウント個人情報設定を取得する。
+      description: アカウント個人情報設定を取得する。
+      operationId: getPersonalSettings
+      tags:
+        - ifc_counselor
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountSettingResponse"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+    put:
+      summary: アカウント個人情報設定を更新する。
+      description: アカウント個人情報設定を更新する。
+      operationId: updatePersonalSettings
+      tags:
+        - ifc_counselor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountSettingUpdateRequest"
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountSettingResponse"
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/settings/account/licenses:
+    post:
+      summary: カウンセラーの資格情報を更新する。
+      description: カウンセラーの資格情報を更新する。
+      operationId: registerPersonalLicense
+      tags:
+        - ifc_counselor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountLicenseUpdateRequest"
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/settings/video_charge:
+    get:
+      summary: アカウントビデオカウンセリング金額設定を取得する。
+      description: アカウントビデオカウンセリング金額設定を取得する。
+      operationId: getVideoChargeSettings
+      tags:
+        - ifc_counselor
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoChargeSettingResponse"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+    post:
+      summary: アカウントビデオカウンセリング金額設定を追加する。
+      description: アカウントビデオカウンセリング金額設定を追加する。
+      operationId: addVideoChargeSettings
+      tags:
+        - ifc_counselor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoChargeSettingRequest"
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/settings/video_charge/{video_charge_id}:
+    delete:
+      summary: アカウントビデオカウンセリング金額設定を削除する。
+      description: アカウントビデオカウンセリング金額設定を削除する。
+      operationId: deleteVideoChargeSettings
+      tags:
+        - ifc_counselor
+      parameters:
+        - name: video_charge_id
+          in: path
+          description: アカウントビデオカウンセリング金額設定ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 削除成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/settings/chat_charge:
+    get:
+      summary: アカウントチャットカウンセリング金額設定を取得する。
+      description: アカウントチャットカウンセリング金額設定を取得する。
+      operationId: getChatChargeSettings
+      tags:
+        - ifc_counselor
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatChargeSettingResponse"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+    post:
+      summary: アカウントチャットカウンセリング金額設定を追加する。
+      description: アカウントチャットカウンセリング金額設定を追加する。
+      operationId: addChatChargeSettings
+      tags:
+        - ifc_counselor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatChargeSettingRequest"
+      responses:
+        '200':
+          description: 更新成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/settings/chat_charge/{chat_charge_id}:
+    delete:
+      summary: アカウントチャットカウンセリング金額設定を削除する。
+      description: アカウントチャットカウンセリング金額設定を削除する。
+      operationId: deleteChatChargeSettings
+      tags:
+        - ifc_counselor
+      parameters:
+        - name: chat_charge_id
+          in: path
+          description: アカウントチャットカウンセリング金額設定ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 削除成功
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/rewards/{type}/{amount}:
+    get:
+      summary: カウンセラーの手取り額を計算する
+      description: カウンセラーの手取り額を計算する
+      operationId: calcCounselorReward
+      tags:
+        - ifc_counselor
+      parameters:
+        - name: type
+          in: path
+          description: |
+            計算する種別
+            - 11: ビデオカウンセリングの10分金額
+            - 21: チャットカウンセリングの2週間金額
+            - 22: チャットカウンセリングの3週間金額
+            - 23: チャットカウンセリングの4週間金額
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: amount
+          in: path
+          description: 金額
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CounselorRewardResponse"
+        '400':
+          description: リクエスト不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/receipts:
+    get:
+      summary: 領収書の一覧を取得する
+      description: 領収書の一覧を取得する
+      operationId: listReceipts
+      tags:
+        - ifc_counselor
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReceiptListResponse"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+  /ifc/receipts/{receipt_id}:
+    get:
+      summary: 領収書をダウンロードする
+      description: 領収書をダウンロードする
+      operationId: downloadReceipt
+      tags:
+        - ifc_counselor
+      parameters:
+        - name: receipt_id
+          in: path
+          description: 領収書ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileData"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+        '404':
+          description: 該当データ無し
+  /ifc/holidays:
+    get:
+      summary: 休日一覧を取得する
+      description: 休日一覧を取得する
+      operationId: listHolidays
+      tags:
+        - ifc_master
+      responses:
+        '200':
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HolidayListResponse"
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginError"
+
+components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: ページ番号
+      schema:
+        type: integer
+    Limit:
+      name: limit
+      in: query
+      description: 取得件数
+      schema:
+        type: integer
+    Month:
+      name: month
+      in: query
+      description: 年月（yyyymm）
+      schema:
+        type: integer
+    Day:
+      name: day
+      in: query
+      description: 日（dd）
+      schema:
+        type: integer
+    SearchWord:
+      name: search_word
+      in: query
+      description: 検索文字列
+      schema:
+        type: string
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: カテゴリーID
+        name:
+          type: string
+          description: カテゴリー名
+      x-examples:
+        example:
+          value:
+            id: 1
+            name: お仕事
+    Counselor:
+      type: object
+      description: カウンセラー情報
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: カウンセラーID
+        biography:
+          type: string
+          nullable: true
+          description: 自己紹介
+        firstName:
+          type: string
+          nullable: true
+          description: 名
+        firstNameHiragana:
+          type: string
+          nullable: true
+          description: 名のふりがな
+        lastName:
+          type: string
+          nullable: true
+          description: 姓
+        lastNameHiragana:
+          type: string
+          nullable: true
+          description: 姓のふりがな
+        profileImage:
+          type: string
+          nullable: true
+          description: プロフィール画像
+        cancellationDate:
+          type: string
+          nullable: true
+          default: null
+          description: 解約日
+      x-examples:
+        example:
+          value:
+            id: １
+            biography: 自己紹介です！！
+            firstName: 渡邉
+            firstNameHiragana: わたなべ
+            lastName: 郁哉
+            lastNameHiragana: ふみや
+            profileImage: 'http://s3/image'
+            cancellationDate: null
+    CounselorCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        categoryId:
+          type: integer
+          format: int64
+        counselorId:
+          type: integer
+          format: int64
+    CounselorShiftPlan:
+      type: object
+      properties:
+        id:
+          type: number
+        counselorId:
+          type: number
+        clientId:
+          type: number
+          nullable: true
+        startedAt:
+          type: string
+          format: date-time
+        endedAt:
+          type: string
+          format: date-time
+    VideoCounselingShift:
+      type: object
+      properties:
+        id:
+          type: number
+        counselorId:
+          type: number
+        startedAt:
+          type: string
+          format: date-time
+        endedAt:
+          type: string
+          format: date-time
+    DeleteVideoCounselingReservationReq:
+      type: object
+      properties:
+        cancelReason:
+          type: string
+    CounselingReservationPaymentIntentReq:
+      type: object
+      properties:
+        counselorId:
+          type: integer
+          format: int64
+        shiftId:
+          type: integer
+          format: int64
+        clientId:
+          type: integer
+          format: int64
+    CreateVideoCounselingReservationReq:
+      type: object
+      properties:
+        paymentId:
+          type: string
+        paymentMethod:
+          type: string
+        counselorId:
+          type: integer
+          format: int64
+        videoCounselingReservationId:
+          type: integer
+          format: int64
+        interviewSheetAnswers:
+          $ref: "#/components/schemas/InterviewSheetAnswer"
+    VideoCounselingReservationListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: お知らせリスト
+          items:
+            $ref: "#/components/schemas/VideoCounselingReservationWithCount"
+      example:
+        total: 2
+        datas:
+          - id: 1
+            status: 1
+            step: '１回目'
+            startedAt: '2022/03/09 10:30'
+            endedAt: '2022/03/09 11:30'
+            counselor:
+              id: 2
+              firstName: 秀史
+              lastName: 大石
+              firstNameHiragana: ひでし
+              lastNameHiragana: おおいし
+              biography: 自己紹介です
+              profileImage: null
+              cancellationDate: null
+          - id: 2
+            status: 1
+            step: '２回目'
+            startedAt: '2022/03/17 10:30'
+            endedAt: '2022/03/17 11:30'
+            counselor:
+              id: 2
+              firstName: 秀史
+              lastName: 大石
+              firstNameHiragana: ひでし
+              lastNameHiragana: おおいし
+              biography: 自己紹介です
+              profileImage: null
+              cancellationDate: null
+      required:
+        - total
+        - datas
+    VideoCounselingReservationWithCount:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        status:
+          type: integer
+          format: int32
+          description: 予約ステータス 1 confirm, 2 ~ 4 cancel
+        step:
+          type: string
+          description: X回目
+        startedAt:
+          type: string
+          description: YYYY/MM/DD HH:MM
+        endedAt:
+          type: string
+          description: YYYY/MM/DD HH:MM
+        counselor:
+          $ref: '#/components/schemas/Counselor'
+    VideoCounselingReservation:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: itsumo for counselorからのお知らせID
+          format: int64
+        clientId:
+          type: integer
+          description: ユーザーID
+        status:
+          type: integer
+          format: int32
+          description: 予約ステータス 1 confirm, 2 ~ 4 cancel
+          # https://aby0.atlassian.net/wiki/spaces/ITSUMOAPP/pages/318898181/DB
+        updatedAt:
+          type: string
+          description: 更新日時
+        createdAt:
+          type: string
+          description: 作成日時
+        shift:
+          $ref: "#/components/schemas/VideoCounselingShift"
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 顧客ID
+        accountName:
+          type: string
+          description: 名
+          nullable: false
+          minLength: 1
+          maxLength: 63
+        firstName:
+          type: string
+          description: 名
+          nullable: false
+          minLength: 1
+          maxLength: 63
+        lastName:
+          type: string
+          description: 姓
+          nullable: false
+          minLength: 1
+          maxLength: 63
+        firstNameHiragana:
+          type: string
+          description: めい
+          nullable: false
+          minLength: 1
+          maxLength: 63
+        lastNameHiragana:
+          type: string
+          description: せい
+          nullable: false
+          minLength: 1
+          maxLength: 63
+        cancellationDate:
+          type: string
+          description: 解約日
+          format: date-time
+          nullable: true
+        clientsInfo:
+          $ref: '#/components/schemas/ClientsInfo'
+    ClientsInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 顧客詳細ID
+        gender:
+          type: integer
+          description: 性別（0：男、1：女、2：その他）
+          nullable: true
+          minimum: 0
+          maximum: 2
+        birthday:
+          type: string
+          format: date
+          description: 誕生年
+          nullable: true
+        phoneNumber:
+          type: string
+          description: 電話番号
+          minLength: 1
+          maxLength: 127
+          nullable: true
+        email:
+          type: string
+          description: メールアドレス
+          minLength: 1
+          maxLength: 255
+          nullable: true
+        jobsStation:
+          type: string
+          description: 最寄り駅
+          nullable: true
+          minLength: 1
+          maxLength: 255
+        identificationCard:
+          type: integer
+          description: '免許証やマイナンバーなどの写真情報(0:未申請, 1:申請中, 2:承認済み)'
+          nullable: true
+          default: 0
+          minimum: 0
+          maximum: 2
+        address:
+          type: object
+          properties:
+            fullAddress:
+              type: string
+              description: 住所（下記を合成したもの）
+            zipCode:
+              type: string
+              description: 郵便番号
+              nullable: true
+              minLength: 1
+              maxLength: 255
+            prefecture:
+              type: string
+              description: 都道府県
+              nullable: true
+              minLength: 1
+              maxLength: 255
+            city:
+              type: string
+              description: 市区町村
+              nullable: true
+              minLength: 1
+              maxLength: 255
+            addressLine1:
+              type: string
+              description: 住所（丁目、番地、号）
+              nullable: true
+              minLength: 1
+              maxLength: 255
+            addressLine2:
+              type: string
+              description: 住所（建物名等）
+              nullable: true
+              minLength: 0
+              maxLength: 255
+    ContactUsType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: お問い合わせ種別ID
+        name:
+          type: string
+          description: お問い合わせ種別名
+    ContactUsViaClient:
+      type: object
+      properties:
+        contactUsTypeId:
+          type: integer
+          format: int64
+          description: お問い合わせ種別ID
+          minimum: 1
+        contents:
+          type: string
+          description: お問い合わせ内容
+        desiredResults:
+          type: string
+          description: 望んでいる結果
+    CounselorInfo:
+      type: object
+      properties:
+        counselorId:
+          type: integer
+          format: int64
+          description: カウンセラーID
+        gender:
+          type: integer
+          description: 性別（0：男、1：女、2：その他）
+          nullable: false
+          minimum: 0
+          maximum: 2
+        birthday:
+          type: string
+          format: date
+          description: 誕生日
+          nullable: true
+        phoneNumber:
+          type: string
+          description: 電話番号
+          minLength: 1
+          maxLength: 127
+          nullable: true
+        zipCode:
+          type: string
+          description: 郵便番号
+          nullable: true
+          minLength: 1
+          maxLength: 255
+        prefecture:
+          type: string
+          description: 都道府県
+          nullable: true
+          minLength: 1
+          maxLength: 255
+        city:
+          type: string
+          description: 市区町村
+          nullable: true
+          minLength: 1
+          maxLength: 255
+        addressLine1:
+          type: string
+          description: 住所（丁目、番地、号）
+          nullable: false
+          minLength: 1
+          maxLength: 255
+        addressLine2:
+          type: string
+          description: 住所（建物名等）
+          nullable: false
+          minLength: 0
+          maxLength: 255
+        bankName:
+          type: string
+          description: 銀行名
+          nullable: false
+          minLength: 0
+          maxLength: 255
+        bankBranchName:
+          type: string
+          description: 支店名
+          nullable: false
+          minLength: 0
+          maxLength: 255
+        bankAccountType:
+          type: integer
+          description: 口座種別（0：普通、1：当座、2：貯蓄）
+          nullable: false
+          minimum: 0
+          maximum: 2
+        bankAccountNumber:
+          type: integer
+          description: 口座番号
+          nullable: false
+    VideoCounselingWagePerTenMinute:
+      type: object
+      description: 'ビデオカウンセリングの10分給'
+      properties:
+        counselorId:
+          type: integer
+          format: int64
+          description: カウンセラーID
+          nullable: false
+        wage:
+          type: integer
+          description: '給料'
+          nullable: false
+        startedOn:
+          type: string
+          format: date
+          description: '開始日'
+          nullable: true
+        endedOn:
+          type: string
+          format: date
+          description: '終了日'
+          nullable: true
+    # form
+    ClientForm:
+      type: object
+      properties:
+        firstName:
+          description: 名
+          type: string
+          minLength: 1
+          maxLength: 63
+        lastName:
+          description: 姓
+          type: string
+          minLength: 1
+          maxLength: 63
+        firstNameHiragana:
+          description: めい
+          type: string
+          minLength: 1
+          maxLength: 63
+        lastNameHiragana:
+          description: せい
+          type: string
+          minLength: 1
+          maxLength: 63
+    ClientsInfoForm:
+      type: object
+      properties:
+        birthday:
+          description: 誕生年
+          type: string
+          format: date
+        email:
+          description: メールアドレス
+          type: string
+          minLength: 1
+          maxLength: 255
+        zipCode:
+          description: 郵便番号
+          type: string
+          minLength: 1
+          maxLength: 127
+        prefecture:
+          description: 都道府県
+          type: string
+          minLength: 1
+          maxLength: 255
+        city:
+          description: 市区町村
+          type: string
+          minLength: 1
+          maxLength: 255
+        addressLine1:
+          description: 住所（丁目、番地、号）
+          type: string
+          minLength: 1
+          maxLength: 255
+        addressLine2:
+          description: 住所（建物名等）
+          type: string
+          minLength: 0
+          maxLength: 255
+        jobsStation:
+          description: 最寄り駅
+          type: string
+          minLength: 1
+          maxLength: 255
+    VideoCounselingShiftReservedRequested:
+      properties:
+        videoCounselingShiftId:
+          description: シフトID
+          type: integer
+          format: int64
+          nullable: false
+        counselorName:
+          description: カウンセラー名
+          type: string
+          format: string
+          nullable: false
+        startedAt:
+          description: 開始時刻
+          type: string
+          format: date-time
+          nullable: false
+        endedAt:
+          description: 終了時刻
+          type: string
+          format: date-time
+          nullable: false
+    VideoCounselingInterviewSheetItem:
+      properties:
+        questionNumber:
+          description: 問い番号
+          type: string
+          format: string
+          nullable: false
+        questionText:
+          description: 問い文言
+          type: string
+          format: string
+          nullable: false
+        choices:
+          type: array
+          items:
+            properties:
+              choiceNumber:
+                description: 選択肢番号
+                type: integer
+                format: int64
+                nullable: false
+              choiceText:
+                description: 選択肢文言
+                type: string
+                format: string
+                nullable: false
+    Exception:
+      type: object
+      properties:
+        message:
+          description: エラー概要
+          type: string
+          format: string
+        errors:
+          description: エラー詳細
+          type: array
+          items:
+            type: string
+    SignUpRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: メールアドレス
+        password:
+          type: string
+          description: パスワード
+        password_confirmation:
+          type: string
+          description: パスワード確認用
+        confirm_success_url:
+          type: string
+          description: 遷移先画面URL（/register/finish/）
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: メールアドレス
+        password:
+          type: string
+          description: パスワード
+    LoginSuccess:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID
+          format: int64
+        email:
+          type: string
+          description: メールアドレス
+        firstName:
+          type: string
+          description: 名前
+        lastName:
+          type: string
+          description: 姓
+        firstNameHiragana:
+          type: string
+          description: なまえ
+        lastNameHiragana:
+          type: string
+          description: せい
+        gender:
+          type: integer
+          description: |
+            性別
+            - 0: 男性
+            - 1: 女性
+            - 2: その他
+        birthday:
+          type: string
+          description: 生年月日（yyyy-mm-dd）
+        companyName:
+          type: string
+          description: 会社名
+        departmentName:
+          type: string
+          description: 所属名
+        phoneNumber:
+          type: string
+          description: 電話番号
+        zipCode:
+          type: string
+          description: 郵便番号
+        prefecture:
+          type: string
+          description: 都道府県
+        city:
+          type: string
+          description: 市区町村
+        addressLine1:
+          type: string
+          description: 住所番地まで
+        addressLine2:
+          type: string
+          description: 建物名等
+        profileImage:
+          type: string
+          description: プロフィール画像URL
+        abyCertification:
+          type: integer
+          description: |
+            aby確認状態
+            - 0: 未認証
+            - 1: カスタマー承認中
+            - 2: 認証済み
+            - 3: 認証却下
+        firebaseToken:
+          type: string
+          description: firebaseログイン用トークン
+      required:
+        - id
+        - email
+        - abyCertification
+    LoginError:
+      type: object
+      properties:
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: string
+    RegisterInfoRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: 名前
+        lastName:
+          type: string
+          description: 姓
+        firstNameHiragana:
+          type: string
+          description: なまえ
+        lastNameHiragana:
+          type: string
+          description: せい
+        gender:
+          type: integer
+          description: |
+            性別
+            - 0: 男性
+            - 1: 女性
+            - 2: その他
+        birthday:
+          type: string
+          description: 生年月日（yyyy-mm-dd）
+        companyName:
+          type: string
+          description: 会社名
+        departmentName:
+          type: string
+          description: 所属名
+        phoneNumber:
+          type: string
+          description: 電話番号
+        zipCode:
+          type: string
+          description: 郵便番号
+        prefecture:
+          type: string
+          description: 都道府県
+        city:
+          type: string
+          description: 市区町村
+        addressLine1:
+          type: string
+          description: 住所番地まで
+        addressLine2:
+          type: string
+          description: 建物名等
+    RegisterIdentification:
+      type: object
+      properties:
+        mimeType:
+          type: string
+          description: 資格認定書の画像MIMEType
+        fileName:
+          type: string
+          description: 資格認定書の画像ファイル名
+        imageData:
+          type: string
+          description: 資格認定書の画像データ（base64encoded）
+        licenseType:
+          type: integer
+          description: |
+            資格の種類
+            - 0: 臨床心理士
+            - 1: 公認心理師
+        licenseExpirationDate:
+          type: string
+          description: 臨床心理士資格のの失効日（yyyy-mm-dd）
+    ResetPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: メールアドレス
+        redirect_url:
+          type: string
+          description: redirect_url
+    SettingPasswordRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          description: 新しいパスワード
+        password_confirmation:
+          type: string
+          description: 確認用パスワード
+        reset_password_token:
+          type: string
+          description: パスワードリセットリクエスト時に振られた文字列
+    InformationListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: お知らせリスト
+          items:
+            $ref: "#/components/schemas/InformationListData"
+      required:
+        - total
+        - datas
+    InformationListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: itsumo for counselorからのお知らせID
+          format: int64
+        title:
+          type: string
+          description: タイトル
+        link:
+          type: string
+          description: 詳細ページのリンクURL
+        updatedAt:
+          type: string
+          description: 更新日時
+        createdAt:
+          type: string
+          description: 作成日時
+      required:
+        - id
+        - title
+        - link
+        - updatedAt
+        - createdAt
+    InformationData:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: itsumo for counselorからのお知らせID
+          format: int64
+        title:
+          type: string
+          description: タイトル
+        link:
+          type: string
+          description: 詳細ページのリンクURL
+        content:
+          type: string
+          description: 詳細ページのコンテンツ（HTML？）
+        updatedAt:
+          type: string
+          description: 更新日時
+        createdAt:
+          type: string
+          description: 作成日時
+      required:
+        - id
+        - title
+        - link
+        - content
+        - updateAt
+        - createdAt
+    ClientNotificationData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        notificationType:
+          type: integer
+          description: counselor, comic, column, or counseling room
+        text:
+          type: string
+        title:
+          type: string
+        link:
+          type: string
+        status:
+          type: integer
+          description: 0 is unread, 1 is read.
+        videoCounselingReservationId:
+          type: integer
+          format: int64
+    ClientNotificationListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: total count
+        numOfUnread:
+          type: integer
+          description: number of unread notifications
+        datas:
+          type: array
+          description: list of notifications
+          items:
+            $ref: "#/components/schemas/ClientNotificationData"
+    NotificationListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        numOfUnread:
+          type: integer
+          description: 未読の件数
+        datas:
+          type: array
+          description: お知らせリスト
+          items:
+            $ref: "#/components/schemas/NotificationListData"
+      required:
+        - total
+        - numOfUnread
+        - datas
+    NotificationListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: お知らせID
+        counselorId:
+          type: integer
+          format: int64
+          description: カウンセラーID
+        isRead:
+          type: integer
+          description: 既読フラグ
+        title:
+          type: string
+          description: タイトル
+        link:
+          type: string
+          description: リンクURL
+        notificationAt:
+          type: string
+          description: 配信時間
+        updatedAt:
+          type: string
+          description: 更新日時
+        createdAt:
+          type: string
+          description: 作成日時
+      required:
+        - id
+        - counselorId
+        - isRead
+        - title
+        - link
+        - notificationAt
+        - updatedAt
+        - createdAt
+    ReservationListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: ビデオ＆チャットカウンセリング予約リスト
+          items:
+            $ref: "#/components/schemas/ReservationListData"
+      required:
+        - total
+        - datas
+    ReservationListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ビデオorチャットカウンセリング予約ID
+        type:
+          type: integer
+          description: |
+            カウンセリング種別
+            - 1: ビデオ
+            - 2: チャット
+        status:
+          type: integer
+          description: |
+            カウンセリング予約状態
+            - チャット予約確定
+            - 予約確定（開始1時間以上前）
+            - 予約確定（開始1時間以内）
+            - カルテ記入待ち
+            - 完了
+        step:
+          type: string
+          description: カウンセリングステップ
+        startedAt:
+          type: string
+          description: 開始時刻
+        endedAt:
+          type: string
+          description: 終了時刻
+        client:
+          $ref: '#/components/schemas/ClientSimple'
+      required:
+        - id
+        - type
+        - status
+        - step
+        - startedAt
+        - endedAt
+        - client
+    VideoReservationListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: ビデオカウンセリング予約リスト
+          items:
+            $ref: "#/components/schemas/VideoReservationListData"
+      required:
+        - total
+        - datas
+    VideoReservationListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ビデオカウンセリング予約ID
+        status:
+          type: integer
+          description: |
+            カウンセリング予約状態
+            - 予約確定（開始1時間以上前）
+            - 予約確定（開始1時間以内）
+            - カルテ記入待ち
+            - 完了
+        step:
+          type: string
+          description: カウンセリングステップ
+        startedAt:
+          type: string
+          description: 開始時刻
+        endedAt:
+          type: string
+          description: 終了時刻
+        client:
+          $ref: '#/components/schemas/ClientSimple'
+      required:
+        - id
+        - status
+        - step
+        - startedAt
+        - endedAt
+        - client
+    VideoReservationUpdateRequest:
+      type: object
+      description: ビデオカウンセリング予約更新情報
+      properties:
+        status:
+          type: integer
+          description: |
+            ビデオカウンセリング予約状態
+            - キャンセル
+            - ビデオカウンセリング完了
+            - カルテ記入完了
+            - 完了
+        reason:
+          type: string
+          description: キャンセル理由
+    VideoShiftListResponse:
+      type: object
+      properties:
+        minutes:
+          type: integer
+          description: 合計時間（分）
+        datas:
+          type: array
+          description: ビデオカウンセリングシフトリスト
+          items:
+            $ref: "#/components/schemas/VideoShiftListData"
+      required:
+        - minutes
+        - datas
+    VideoShiftListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ビデオカウンセリングシフトID
+        status:
+          type: integer
+          description: |
+            ビデオカウンセリングシフト状態
+            - 0: 未確定
+            - 1: 確定
+        startedAt:
+          type: string
+          description: 開始時刻
+        endedAt:
+          type: string
+          description: 終了時刻
+        isReserved:
+          type: boolean
+          description: 予約済み
+        video_reservation_id:
+          type: integer
+          format: int64
+          description: ビデオカウンセリング予約ID
+        reservedClient:
+          $ref: '#/components/schemas/ClientSimple'
+      required:
+        - id
+        - status
+        - startedAt
+        - endedAt
+        - isReserved
+    VideoShiftCreateRequest:
+      type: object
+      description: ビデオカウンセリングシフト作成リクエスト
+      properties:
+        datas:
+          type: array
+          items:
+            $ref: "#/components/schemas/VideoShiftUpdateData"
+    VideoShiftUpdateData:
+      type: object
+      description: ビデオカウンセリング更新作成データ
+      properties:
+        startedAt:
+          type: string
+          description: 開始時刻
+        endedAt:
+          type: string
+          description: 終了時刻
+    VideoShiftCommitRequest:
+      type: object
+      description: ビデオカウンセリングシフト確定リクエスト
+      properties:
+        type:
+          type: string
+          description: |
+            確定・未確定種別
+            - commit: 確定
+            - rollback: 未確定
+        month:
+          type: string
+          description: 対象年月（yyyymm）
+    ChatShiftResponse:
+      type: object
+      properties:
+        chatEnabled:
+          type: boolean
+          description: 当月チャット予約可能
+        newClientNumber:
+          type: integer
+          description: 新規クライアント予約期間の重複人数
+      required:
+        - chatEnabled
+        - newClientNumber
+    ChatShiftUpdateRequest:
+      type: object
+      properties:
+        yearMonth:
+          type: string
+          description: 年月
+        chatEnabled:
+          type: boolean
+          description: 当月チャット予約可能
+        newClientNumber:
+          type: integer
+          description: 新規クライアント予約期間の重複人数
+    ChatReservationListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: チャットカウンセリング予約リスト
+          items:
+            $ref: "#/components/schemas/ChatReservationListData"
+      required:
+        - total
+        - datas
+    ChatReservationListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: チャットカウンセリング予約ID
+        status:
+          type: integer
+          description: |
+            カウンセリング予約状態
+            - 予約確定（開始1時間以上前）
+            - 予約確定（開始1時間以内）
+            - カルテ記入待ち
+            - 完了
+        step:
+          type: string
+          description: カウンセリングステップ
+        startedDate:
+          type: string
+          description: 開始日
+        endedDate:
+          type: string
+          description: 終了日
+        client:
+          $ref: '#/components/schemas/ClientSimple'
+      required:
+        - id
+        - status
+        - step
+        - startedDate
+        - endedDate
+        - client
+    ClientListResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: クライアントリスト
+          items:
+            $ref: "#/components/schemas/ClientSimple"
+      required:
+        - total
+        - datas
+    ChatReservationUpdateRequest:
+      type: object
+      description: チャットカウンセリング予約更新情報
+      properties:
+        status:
+          type: integer
+          description: |
+            チャットカウンセリング予約状態
+            - キャンセル
+            - チャットカウンセリング完了
+            - カルテ記入完了
+            - 完了
+        reason:
+          type: string
+          description: キャンセル理由
+    ChatReservationSendMessageRequest:
+      type: object
+      description: チャットカウンセリングのチャット送信情報
+      properties:
+        message:
+          type: string
+          description: メッセージ
+    ClientSimple:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: クライアントID
+        firstName:
+          type: string
+          description: 名前
+        lastName:
+          type: string
+          description: 姓
+        firstNameHiragana:
+          type: string
+          description: なまえ
+        lastNameHiragana:
+          type: string
+          description: せい
+        profileImage:
+          type: string
+          description: プロフィール画像URL
+      required:
+        - id
+        - firstName
+        - lastName
+        - firstNameHiragana
+        - lastNameHiragana
+    ClientDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: クライアントID
+        firstName:
+          type: string
+          description: 名前
+        lastName:
+          type: string
+          description: 姓
+        firstNameHiragana:
+          type: string
+          description: なまえ
+        lastNameHiragana:
+          type: string
+          description: せい
+        profileImage:
+          type: string
+          description: プロフィール画像URL
+        gender:
+          type: integer
+          description: |
+            性別
+            - 0: 男性
+            - 1: 女性
+            - 2: その他
+        birthday:
+          type: string
+          description: 誕生日
+        medicalHistory:
+          type: string
+          description: 検査記録・病歴
+        counselorRemarks:
+          type: string
+          description: カウンセラーの備考
+      required:
+        - id
+        - firstName
+        - lastName
+        - firstNameHiragana
+        - lastNameHiragana
+        - gender
+        - birthday
+        - medicalHistory
+    ClientDetailUpdateRequest:
+      type: object
+      properties:
+        counselorRemarks:
+          type: string
+          description: カウンセラーの備考
+    ClientInterviewSheetListResponse:
+      type: object
+      properties:
+        client:
+          $ref: "#/components/schemas/ClientSimple"
+        interviewSheets:
+          type: array
+          description: 問診票リスト
+          items:
+            $ref: "#/components/schemas/ClientInterviewSheetListData"
+      required:
+        - client
+        - interviewSheets
+    ClientInterviewSheetListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: カウンセリング問診票ID
+        choiceNo1:
+          type: integer
+          description: 問１の答え
+        choiceNo2:
+          type: integer
+          description: 問２の答え
+        choiceNo3:
+          type: integer
+          description: 問３の答え
+        choiceNo4:
+          type: integer
+          description: 問４の答え
+        choiceNo5:
+          type: integer
+          description: 問５の答え
+        choiceNo6:
+          type: integer
+          description: 問６の答え
+        choiceNo7:
+          type: integer
+          description: 問７の答え
+        choiceNo8:
+          type: integer
+          description: 問８の答え
+        choiceNo9:
+          type: integer
+          description: 問９の答え
+        choiceNo10:
+          type: integer
+          description: 問１０の答え
+        totalScore:
+          type: integer
+          description: 合計点
+        counselingType:
+          type: integer
+          description: |
+            カウンセリング種別
+            - 1: ビデオ
+            - 2: チャット
+        counselingStartedAt:
+          type: string
+          description: カウンセリング開始時刻
+        counselingEndedAt:
+          type: string
+          description: カウンセリング終了時刻
+        counselingStep:
+          type: string
+          description: カウンセリングステップ
+        counselorName:
+          type: string
+          description: カウンセラー名
+      required:
+        - id
+        - choiceNo1
+        - choiceNo2
+        - choiceNo3
+        - choiceNo4
+        - choiceNo5
+        - choiceNo6
+        - choiceNo7
+        - choiceNo8
+        - choiceNo9
+        - choiceNo10
+        - totalScore
+        - counselingType
+        - counselingStartedAt
+        - counselingEndedAt
+        - counselingStep
+        - counselorName
+    ClientInterviewSheetAnswerResponse:
+      type: object
+      properties:
+        client:
+          $ref: "#/components/schemas/ClientSimple"
+        counselingType:
+          type: integer
+          description: |
+            カウンセリング種別
+            - 1: ビデオ
+            - 2: チャット
+        counselingStartedAt:
+          type: string
+          description: カウンセリング開始時刻
+        counselingEndedAt:
+          type: string
+          description: カウンセリング終了時刻
+        counselingStep:
+          type: string
+          description: カウンセリングステップ
+        answer:
+          $ref: "#/components/schemas/InterviewSheetAnswer"
+      required:
+        - client
+        - counselingType
+        - counselingStartedAt
+        - counselingEndedAt
+        - counselingStep
+        - answer
+    InterviewSheetAnswer:
+      type: object
+      properties:
+        choiceNo1:
+          type: integer
+          description: 問１の答え
+        choiceNo2:
+          type: integer
+          description: 問２の答え
+        choiceNo3:
+          type: integer
+          description: 問３の答え
+        choiceNo4:
+          type: integer
+          description: 問４の答え
+        choiceNo5:
+          type: integer
+          description: 問５の答え
+        choiceNo6:
+          type: integer
+          description: 問６の答え
+        choiceNo7:
+          type: integer
+          description: 問７の答え
+        choiceNo8:
+          type: integer
+          description: 問８の答え
+        choiceNo9:
+          type: integer
+          description: 問９の答え
+        choiceNo10:
+          type: integer
+          description: 問１０の答え
+        totalScore:
+          type: integer
+          description: 合計点
+      required:
+        - choiceNo1
+        - choiceNo2
+        - choiceNo3
+        - choiceNo4
+        - choiceNo5
+        - choiceNo6
+        - choiceNo7
+        - choiceNo8
+        - choiceNo9
+        - choiceNo10
+        - totalScore
+    ClientMedicalRecordListResponse:
+      type: object
+      properties:
+        client:
+          $ref: "#/components/schemas/ClientSimple"
+        medicalRecords:
+          type: array
+          description: カルテリスト
+          items:
+            $ref: "#/components/schemas/ClientMedicalRecordListData"
+      required:
+        - client
+        - medicalRecords
+    ClientMedicalRecordListData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: カウンセリングのカルテID
+        counselingType:
+          type: integer
+          description: |
+            カウンセリング種別
+            - 1: ビデオ
+            - 2: チャット
+        counselingStartedAt:
+          type: string
+          description: カウンセリング開始時刻
+        counselingEndedAt:
+          type: string
+          description: カウンセリング終了時刻
+        counselingStep:
+          type: string
+          description: カウンセリングステップ
+        counselorName:
+          type: string
+          description: カウンセラー名
+        isComplete:
+          type: boolean
+          description: カルテ記入済みフラグ
+      required:
+        - id
+        - counselingType
+        - counselingStartedAt
+        - counselingEndedAt
+        - counselingStep
+        - counselorName
+        - isComplete
+    ClientMedicalRecordDetailResponse:
+      type: object
+      properties:
+        client:
+          $ref: "#/components/schemas/ClientSimple"
+        counselingStartedAt:
+          type: string
+          description: ビデオカウンセリング開始時刻
+        counselingEndedAt:
+          type: string
+          description: ビデオカウンセリング終了時刻
+        counselingStep:
+          type: string
+          description: ビデオカウンセリングステップ
+        recordedVideo:
+          type: string
+          description: ビデオ録画
+        totalScore:
+          type: integer
+          description: 合計点数
+        appearance:
+          type: string
+          description: 外見
+        problem:
+          type: integer
+          description: 悩み
+        chiefComplaint:
+          type: string
+          description: 主訴
+        hypothesis:
+          type: string
+          description: 見立て
+        policy:
+          type: string
+          description: 方針
+        remarks:
+          type: string
+          description: 備考
+        isComplete:
+          type: boolean
+          description: 記入済み・未記入
+        privateFiles:
+          type: array
+          description: 非公開ファイル
+          items:
+            $ref: "#/components/schemas/File"
+        counselorFiles:
+          type: array
+          description: カウンセラーファイル
+          items:
+            $ref: "#/components/schemas/File"
+        clientFiles:
+          type: array
+          description: クライアントファイル
+          items:
+            $ref: "#/components/schemas/File"
+      required:
+        - client
+        - counselingStartedAt
+        - counselingEndedAt
+        - counselingStep
+        - isComplete
+        - privateFiles
+        - counselorFiles
+        - clientFiles
+    ClientMedicalRecordUpdateRequest:
+      type: object
+      properties:
+        appearance:
+          type: string
+          description: 外見
+        problem:
+          type: integer
+          description: 悩み
+        chiefComplaint:
+          type: string
+          description: 主訴
+        hypothesis:
+          type: string
+          description: 見立て
+        policy:
+          type: string
+          description: 方針
+        remarks:
+          type: string
+          description: 備考
+        isComplete:
+          type: boolean
+          description: 記入済み・未記入
+    ContactRequest:
+      type: object
+      properties:
+        contactTypeId:
+          type: integer
+          format: int64
+          description: お問い合わせ種別ID
+        contents:
+          type: string
+          description: お問い合わせ内容
+        desiredResults:
+          type: string
+          description: 望んでいる結果
+    ContactType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: お問い合わせ種別ID
+        name:
+          type: string
+          description: お問い合わせ種別名
+        position:
+          type: integer
+          description: 表示順
+      required:
+        - id
+        - name
+        - position
+    InterviewSheetQuestion:
+      type: object
+      properties:
+        questionNumber:
+          type: integer
+          description: 問番号
+        questionText:
+          type: string
+          description: 問
+        choices:
+          type: array
+          items:
+            $ref: "#/components/schemas/InterviewSheetChoice"
+      required:
+        - questionNumber
+        - questionText
+        - choices
+    InterviewSheetChoice:
+      type: object
+      properties:
+        choiceNumber:
+          type: integer
+          description: 選択肢番号
+        choiceText:
+          type: string
+          description: 選択肢
+      required:
+        - choiceNumber
+        - choiceText
+    FileData:
+      type: object
+      properties:
+        fileName:
+          type: string
+          description: ファイル名
+        mimeType:
+          type: string
+          description: MIMEType
+        fileData:
+          type: string
+          description: BASE64エンコードされたファイルデータ
+      required:
+        - fileName
+        - mimeType
+        - fileData
+    AccountSettingResponse:
+      type: object
+      properties:
+        profileImageFile:
+          type: string
+          description: 顔写真データ（base64）
+        firstName:
+          type: string
+          description: 名前
+        lastName:
+          type: string
+          description: 姓
+        firstNameHiragana:
+          type: string
+          description: なまえ
+        lastNameHiragana:
+          type: string
+          description: せい
+        gender:
+          type: integer
+          description: |
+            性別
+            - 0: 男性
+            - 1: 女性
+            - 2: その他
+        birthday:
+          type: string
+          description: 生年月日（yyyy-mm-dd）
+        companyName:
+          type: string
+          description: 会社名
+        departmentName:
+          type: string
+          description: 所属名
+        phoneNumber:
+          type: string
+          description: 電話番号
+        zipCode:
+          type: string
+          description: 郵便番号
+        prefecture:
+          type: string
+          description: 都道府県
+        city:
+          type: string
+          description: 市区町村
+        addressLine1:
+          type: string
+          description: 住所番地まで
+        addressLine2:
+          type: string
+          description: 建物名等
+        email:
+          type: string
+          description: メールアドレス
+        licenses:
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountLicenseData"
+        biography:
+          type: string
+          description: 自己紹介
+        categories:
+          type: array
+          description: カテゴリーIDのリスト
+          items:
+            type: integer
+            format: int64
+      required:
+        - firstName
+        - lastName
+        - firstNameHiragana
+        - lastNameHiragana
+        - gender
+        - birthday
+        - phoneNumber
+        - zipCode
+        - prefecture
+        - city
+        - addressLine1
+        - addressLine2
+        - categories
+        - licenses
+    AccountLicenseData:
+      type: object
+      properties:
+        licenseType:
+          type: integer
+          description: |
+            資格の種類
+            - 0: 臨床心理士
+            - 1: 公認心理師
+        licenseExpirationDate:
+          type: string
+          description: 臨床心理士資格のの失効日（yyyy-mm-dd）
+    AccountSettingUpdateRequest:
+      type: object
+      properties:
+        profileImageData:
+          $ref: "#/components/schemas/FileData"
+        firstName:
+          type: string
+          description: 名前
+        lastName:
+          type: string
+          description: 姓
+        firstNameHiragana:
+          type: string
+          description: なまえ
+        lastNameHiragana:
+          type: string
+          description: せい
+        gender:
+          type: integer
+          description: |
+            性別
+            - 0: 男性
+            - 1: 女性
+            - 2: その他
+        birthday:
+          type: string
+          description: 生年月日（yyyy-mm-dd）
+        companyName:
+          type: string
+          description: 会社名
+        departmentName:
+          type: string
+          description: 所属名
+        phoneNumber:
+          type: string
+          description: 電話番号
+        zipCode:
+          type: string
+          description: 郵便番号
+        prefecture:
+          type: string
+          description: 都道府県
+        city:
+          type: string
+          description: 市区町村
+        addressLine1:
+          type: string
+          description: 住所番地まで
+        addressLine2:
+          type: string
+          description: 建物名等
+        email:
+          type: string
+          description: メールアドレス
+        biography:
+          type: string
+          description: 自己紹介
+        categories:
+          type: array
+          description: カテゴリーIDのリスト
+          items:
+            type: integer
+            format: int64
+    AccountLicenseUpdateRequest:
+      type: object
+      properties:
+        licenses:
+          type: array
+          items:
+            $ref: "#/components/schemas/RegisterIdentification"
+    VideoChargeSettingResponse:
+      type: object
+      description: ビデオカウンセリング金額設定レスポンス
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: ビデオカウンセリング金額設定
+          items:
+            $ref: "#/components/schemas/VideoChargeSetting"
+      required:
+        - total
+        - datas
+    VideoChargeSetting:
+      type: object
+      description: ビデオカウンセリング金額設定
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ビデオカウンセリング金額設定ID
+        from:
+          type: string
+          description: 開始日（yyyy-mm-dd）
+        to:
+          type: string
+          description: 終了日（yyyy-mm-dd）
+        wage:
+          type: integer
+          description: 金額
+        deletable:
+          type: boolean
+          description: 削除可能かどうか
+      required:
+        - id
+        - from
+        - wage
+        - deletable
+    VideoChargeSettingRequest:
+      type: object
+      description: ビデオカウンセリング金額設定追加リクエスト
+      properties:
+        from:
+          type: string
+          description: 開始日（yyyy-mm-dd）
+        wage:
+          type: integer
+          description: 金額
+    ChatChargeSettingResponse:
+      type: object
+      description: チャットカウンセリング金額設定レスポンス
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: チャットカウンセリング金額設定
+          items:
+            $ref: "#/components/schemas/ChatChargeSetting"
+      required:
+        - total
+        - datas
+    ChatChargeSetting:
+      type: object
+      description: チャットカウンセリング金額設定
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: チャットカウンセリング金額設定ID
+        startedOn:
+          type: string
+          description: 開始日（yyyy-mm-dd）
+        endedOn:
+          type: string
+          description: 終了日（yyyy-mm-dd）
+        twoWeeksPrice:
+          type: integer
+          description: ２週間金額
+        threeWeeksPrice:
+          type: integer
+          description: ３週間金額
+        fourWeeksPrice:
+          type: integer
+          description: ４週間金額
+        deletable:
+          type: boolean
+          description: 削除可能かどうか
+      required:
+        - id
+        - startedOn
+        - twoWeeksPrice
+        - threeWeeksPrice
+        - fourWeeksPrice
+        - deletable
+    ChatChargeSettingRequest:
+      type: object
+      description: チャットカウンセリング金額設定追加リクエスト
+      properties:
+        startedOn:
+          type: string
+          description: 開始日（yyyy-mm-dd）
+        twoWeeksPrice:
+          type: integer
+          description: ２週間金額
+        threeWeeksPrice:
+          type: integer
+          description: ３週間金額
+        fourWeeksPrice:
+          type: integer
+          description: ４週間金額
+    CounselorRewardResponse:
+      type: object
+      description: カウンセラー手取りレスポンス
+      properties:
+        reward:
+          type: integer
+          description: 手取り額
+    ReceiptListResponse:
+      type: object
+      description: 帳票（領収書）一覧レスポンス
+      properties:
+        total:
+          type: integer
+          description: 全件数
+        datas:
+          type: array
+          description: 帳票リスト
+          items:
+            $ref: "#/components/schemas/ReceiptListData"
+      required:
+        - total
+        - datas
+    ReceiptListData:
+      type: object
+      description: 帳票（領収書）一覧データ
+      properties:
+        id:
+          type: string
+          description: 帳票ID（おそらく文字列）
+        fileName:
+          type: string
+          description: ファイル名
+        month:
+          type: string
+          description: 年月
+      required:
+        - id
+        - fileName
+        - month
+    CategoryListResponse:
+      type: array
+      description: カテゴリーリストレスポンス
+      items:
+        $ref: "#/components/schemas/Category"
+    HolidayListResponse:
+      type: object
+      description: 休日リスト
+      properties:
+        holidays:
+          type: array
+          items:
+            type: string
+            description: 休日（yyyy-mm-dd）
+      required:
+        - holidays
+    File:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ファイルID
+        fileName:
+          type: string
+          description: ファイル名
+        fileUrl:
+          type: string
+          description: ファイルURL
+      required:
+        - id
+        - fileName
+        - fileUrl
+    VideoMeetingResponse:
+      type: object
+      properties:
+        meetingInfo:
+          $ref: "#/components/schemas/meetingInfo"
+        attendeeInfo:
+          $ref: "#/components/schemas/attendeeInfo"
+      required:
+        - meetingInfo
+        - attendeeInfo
+    meetingInfo:
+      type: object
+      properties:
+        meetingId:
+          type: string
+          description: meeting id
+        externalMeetingId:
+          type: string
+          description: external meeting id
+        audioHostUrl:
+          type: string
+          description: audio_host_url
+        audioFallbackUrl:
+          type: string
+          description: audio_fallback_url
+        screenDataUrl:
+          type: string
+          description: screen_data_url
+        screenSharingUrl:
+          type: string
+          description: screen_sharing_url
+        screenViewingUrl:
+          type: string
+          description: screen_viewing_url
+        signalingUrl:
+          type: string
+          description: signaling_url
+        turnControlUrl:
+          type: string
+          description: turn_control_url
+        eventIngestionUrl:
+          type: string
+          description: event_ingestion_url
+        mediaRegion:
+          type: string
+          description: media_region
+    attendeeInfo:
+      type: object
+      properties:
+        externalUserId:
+          type: string
+          description: external_user_id
+        attendeeId:
+          type: string
+          description: attendee_id
+        joinToken:
+          type: string
+          description: join_token
+    VideoMovieResponse:
+      type: object
+      properties:
+        counselingMovie:
+          type: string
+          description: movieのURL
+    CounselorCertificationRequest:
+      type: object
+      description: カウンセラー承認リクエスト
+      properties:
+        counselorId:
+          type: integer
+          format: int64
+          description: カウンセラーID
+        abyCertification:
+          type: integer
+          description: |
+            aby確認状態
+            - 0: 未認証
+            - 1: カスタマー承認中
+            - 2: 認証済み
+            - 3: 認証却下
+tags:
+  - name: clients
+    description: 顧客基本情報API
+  - name: clients_info
+    description: 顧客情報詳細API
+  - name: categories
+    description: ''
+  - name: counselors
+    description: 'カウンセラーAPI'
+  - name: contact_us_types
+    description: 問い合わせ種別一覧取得API
+  - name: ifc_auth
+    description: 登録・認証
+  - name: ifc_information
+    description: お知らせ
+  - name: ifc_notification
+    description: 通知
+  - name: ifc_top
+    description: TOPページ専用
+  - name: ifc_video
+    description: ビデオカウンセリング
+  - name: ifc_chat
+    description: チャットカウンセリング
+  - name: ifc_contact
+    description: お問い合わせ
+  - name: ifc_client
+    description: クライアント
+  - name: ifc_counselor
+    description: カウンセラー
+  - name: ifc_master
+    description: マスターデータ

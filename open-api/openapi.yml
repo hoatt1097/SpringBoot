@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  contact:
+    name: Itblog API
+  description: Itblog API
+  version: 1.0.0
+  title: itblog api
+servers:
+  - url: 'http://localhost:5000/api'
+    description: local
+  - url: 'https://itblog/api'
+    description: prd
+paths:
+  /auth:
+    post:
+      summary: signup
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "User registered successfully!"
+        '400':
+          description: 400 response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: false
+                message: "Username is already taken!"
+components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: page number
+      schema:
+        type: integer
+    Limit:
+      name: limit
+      in: query
+      description: limit number
+      schema:
+        type: integer
+    SearchWord:
+      name: search_word
+      in: query
+      description: search work
+      schema:
+        type: string
+  schemas:
+    SignUpRequest:
+      type: object
+      description: SignUp request
+      properties:
+        name:
+          type: string
+          description: Name
+        username:
+          type: string
+          description: Username
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Password
+        role:
+          type: string
+          description: Role of user(ROLE_ADMIN, ROLE_USER)
+      required:
+        - name
+        - username
+        - email
+        - password
+      x-example:
+        example:
+          value:
+            name: admin
+            username: admin
+            email: admin@gmail.com
+            password: admin123
+            role: ROLE_ADMIN
+
+

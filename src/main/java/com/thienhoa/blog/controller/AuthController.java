@@ -4,10 +4,10 @@ import com.thienhoa.blog.exception.AppException;
 import com.thienhoa.blog.model.Role;
 import com.thienhoa.blog.type.RoleName;
 import com.thienhoa.blog.model.User;
-import com.thienhoa.blog.payload.ApiResponse;
-import com.thienhoa.blog.payload.JwtAuthenticationResponse;
-import com.thienhoa.blog.payload.LoginRequest;
-import com.thienhoa.blog.payload.SignUpRequest;
+import com.thienhoa.blog.payload.response.ErrorResponse;
+import com.thienhoa.blog.payload.response.JwtAuthenticationResponse;
+import com.thienhoa.blog.payload.request.LoginRequest;
+import com.thienhoa.blog.payload.request.SignUpRequest;
 import com.thienhoa.blog.repository.RoleRepository;
 import com.thienhoa.blog.repository.UserRepository;
 import com.thienhoa.blog.security.CustomUserDetailsService;
@@ -21,7 +21,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,10 +55,10 @@ public class AuthController {
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    @PostMapping("/token")
+    @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody @Valid LoginRequest loginRequest) {
         try {
-            logger.info("************** Signin START ********************");
+            logger.info("************** Sign in START ********************");
             // UserDetails user = customUserDetailsService.loadUserByUsername(loginRequest.getUsernameOrEmail());
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -69,19 +68,16 @@ public class AuthController {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken(authentication);
-            return new ResponseEntity(new ApiResponse(true, "Successfully!", new JwtAuthenticationResponse(jwt)),
-                    HttpStatus.OK);
+            return new ResponseEntity(new JwtAuthenticationResponse(jwt), HttpStatus.OK);
         }
         catch (UsernameNotFoundException e){
-            return new ResponseEntity(new ApiResponse(false, e.getMessage()),
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
         }
         catch (Exception e){
-            return new ResponseEntity(new ApiResponse(false, e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         finally {
-            logger.info("************** Signin STOP ********************");
+            logger.info("************** Sign in STOP ********************");
         }
     }
 
@@ -90,13 +86,11 @@ public class AuthController {
         try {
             logger.info("************** Register START ********************");
             if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-                return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
-                        HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(new ErrorResponse("Username is already taken!"), HttpStatus.BAD_REQUEST);
             }
 
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-                return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
-                        HttpStatus.BAD_REQUEST);
+                return new ResponseEntity(new ErrorResponse("Email Address already in use!"), HttpStatus.BAD_REQUEST);
             }
 
             // Creating user's account
@@ -116,7 +110,7 @@ public class AuthController {
 
             userRepository.save(user);
 
-            return new ResponseEntity(new ApiResponse(true, "User registered successfully"), HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
         }
         finally {
             logger.info("************** Register FINISH ********************");

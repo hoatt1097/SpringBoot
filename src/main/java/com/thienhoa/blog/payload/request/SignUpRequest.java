@@ -1,4 +1,4 @@
-package com.thienhoa.blog.payload;
+package com.thienhoa.blog.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

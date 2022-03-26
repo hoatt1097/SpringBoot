@@ -43,24 +43,23 @@ The goal of the project is to
 mvn clean install
 ```
 
-### Start the API and WebUI server
+### Open api start
 ```bash
-# Start the server (9119)
-# port and other configurations for API servere is in [./src/main/resources/application.properties](/src/main/resources/application.properties) file
+# Start with docker
+# port and other configurations for API servere is in [./open-api/openapi.yml) file
 
-# If you build with maven jar location will be 
-java -jar ./target/app-1.0.0.jar
+# Install docker and docker-compose. After that check version:
+docker -v # Docker version 20.10.12, build e91ed57
+docker-compose -v # docker-compose version 1.29.2, build 5becea4c
 
-# If you build with gradle jar location will be 
-java -jar ./build/libs/app-1.0.0.jar
+# Run docker compose up to start open api
+docker-compose up -d
 ```
 
 ### Accessing Application
-Cpmponent         | URL                                      | Credentials
----               | ---                                      | ---
-Swagger (API Ref) |  http://localhost:9119/swagger-ui.html   |
-Redoc (API Ref)   |  http://localhost:9119/redoc/index.html  |
-Swagger Spec      |  http://localhost:9119/api-docs          |
+Cpmponent         | URL                    | Credentials
+---               |------------------------| ---
+OpenApi doc      | http://localhost:8100/ |
 
 ### Tools
 1. Intellij

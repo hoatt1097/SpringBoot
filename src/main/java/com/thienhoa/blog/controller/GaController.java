@@ -2,7 +2,7 @@ package com.thienhoa.blog.controller;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
 import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
-import com.thienhoa.blog.payload.ApiResponse;
+import com.thienhoa.blog.payload.response.ErrorResponse;
 import com.thienhoa.blog.service.GaService;
 
 import org.slf4j.Logger;
@@ -34,8 +34,7 @@ public class GaController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return new ResponseEntity(new ApiResponse(true, "Get data Google Analytics successfully!", 123),
-                    HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
         }
         finally {
             logger.info("************** Get data Google Analytics stop ********************");
