@@ -11,7 +11,7 @@ servers:
   - url: 'https://itblog/api'
     description: prd
 paths:
-  /auth:
+  /auth/signup:
     post:
       summary: signup
       tags:
@@ -24,32 +24,35 @@ paths:
       responses:
         '200':
           description: 200 response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
-              example:
-                success: true
-                message: "User registered successfully!"
         '400':
           description: 400 response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
-              example:
-                success: false
-                message: "Username is already taken!"
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/signin:
+    post:
+      summary: signin
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponse'
+        '404':
+          description: 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   parameters:
     Page:
@@ -89,7 +92,7 @@ components:
           description: Password
         role:
           type: string
-          description: Role of user(ROLE_ADMIN, ROLE_USER)
+          description: admin or remove role field
       required:
         - name
         - username
@@ -103,5 +106,57 @@ components:
             email: admin@gmail.com
             password: admin123
             role: ROLE_ADMIN
+    SignInRequest:
+      type: object
+      description: SignIn request
+      properties:
+        usernameOrEmail:
+          type: string
+          description: Username or email in order to login
+        password:
+          type: string
+          description: Password login
+      required:
+        - usernameOrEmail
+        - password
+      x-example:
+        example:
+          value:
+            usernameOrEmail: admin@gmail.com
+            password: admin123
+    ErrorResponse:
+      type: object
+      description: Error response
+      properties:
+        success:
+          type: string
+          description: false
+        message:
+          type: string
+      required:
+        - success
+        - message
+      example:
+        value:
+          success: false
+          message: string
+    SignInResponse:
+      type: object
+      description: SignIn response
+      properties:
+        accessToken:
+          type: string
+          description: Access token JWT
+        tokenType:
+          type: string
+          description: Token type
+      required:
+        - accessToken
+        - tokenType
+      x-example:
+        example:
+          value:
+            accessToken: string
+            tokenType: Bearer
 
 
